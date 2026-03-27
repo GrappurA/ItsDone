@@ -1,15 +1,18 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Alfa_Slab_One } from "next/font/google";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
+import Image from "next/image";
+import profilePic from "./src/profilepic.png";
+import morePic from "./src/more.png"
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+import StarsCounter from "./ReactComponents/StarsCounter"
+import StreakCounter from "./ReactComponents/StreakCounter"
+
+const alfaSlab = Alfa_Slab_One({
+  variable: "--font-alfa",
   subsets: ["latin"],
+  weight: "400",
 });
 
 export const metadata: Metadata = {
@@ -25,9 +28,32 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${alfaSlab.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
-    </html>
+
+      <body className="min-h-full">
+
+        <header className="w-[99%] ml-auto mr-auto bg-[#635D5C] text-4xl border-solid border-4 rounded-3xl p-2 mt-1">
+
+          <div className="flex gap-15 flex flex-row items-center">
+
+            <div className="w-14 h-14 rounded-full overflow-hidden border border-gray-200 transition-transform duration-300 hover:scale-110 cursor-pointer hover:border-white">
+              <Image src={profilePic} width={70} height={70} alt="ProfilePic" loading="eager" />
+            </div>
+
+            <StarsCounter starsCount={50} />
+            <StreakCounter streakCount={50} />
+
+            <p className="font-logo text-5xl ml-[20%]">ItsDone✔️</p>
+
+            <div className="border-solid border-4 p-1 rounded-3xl ml-auto transition-all duration-300 hover:scale-110 hover:bg-white/10 cursor-pointer">
+              <Image src={morePic} width={50} height={50} alt="More" loading="eager" />
+            </div>
+
+          </div>
+        </header>
+        {children}
+      </body>
+    </html >
   );
 }
