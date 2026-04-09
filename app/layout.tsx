@@ -1,14 +1,13 @@
 import type { Metadata } from "next";
 import { Alfa_Slab_One } from "next/font/google";
 import "./globals.css";
+
 import React from "react";
 
-import Image from "next/image";
-import profilePic from "./src/profilepic.png";
+import AuthProvider from "./ReactComponents/AuthProvider"
 
-import StarsCounter from "./ReactComponents/StarsCounter"
-import StreakCounter from "./ReactComponents/StreakCounter"
-import MoreMenu from "./ReactComponents/MoreMenu"
+import Header from "./ReactComponents/Header"
+import Footer from "./ReactComponents/Footer"
 
 const alfaSlab = Alfa_Slab_One({
   variable: "--font-alfa",
@@ -31,35 +30,15 @@ export default function RootLayout({
       lang="en"
       className={`${alfaSlab.variable} h-full antialiased`}
     >
-      <body className="min-h-full ">
+      <AuthProvider>
+        <body className="min-h-full ">
+          <Header />
 
-        <header className="select-none w-[100%] ml-auto mr-auto bg-[#9D9695] text-4xl p-2" style={{ borderTop: "solid black 5px", borderBottom: "solid black 5px" }}>
-          <div className="flex flex flex-row items-center">
+          {children}
 
-            <div className="w-14 h-14 rounded-full overflow-hidden border border-gray-200 transition-transform duration-300 hover:scale-110 cursor-pointer hover:border-white">
-              <Image src={profilePic} width={70} height={70} alt="ProfilePic" loading="eager" />
-            </div>
-
-            <div className="flex gap-17 ml-15">
-              <StarsCounter starsCount={50} />
-              <StreakCounter streakCount={50} />
-            </div>
-
-            <p className="font-logo text-5xl ml-[20%]"><u className="decoration-[#D0FFCE] decoration-auto underline-offset-[10px]">ItsDone✔️</u></p>
-
-            <MoreMenu />
-          </div>
-        </header>
-
-        {children}
-
-        <footer className="select-none bg-[#9D9695] text-center" style={{ borderTop: "solid black 5px", borderBottom: "solid black 5px" }}>
-          <p>©ItsDone.com</p>
-          <p>31 10 06 active users</p>
-          <p className="bg-red-100 w-fit p-1 mb-1 ml-auto mr-auto rounded-xl">Buy me a coffee</p>
-          <hr className="w-[0.1px] h-[0.1px]" />
-        </footer>
-      </body>
+          <Footer />
+        </body>
+      </AuthProvider>
     </html >
   );
 }
