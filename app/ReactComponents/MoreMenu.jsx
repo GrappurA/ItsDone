@@ -3,9 +3,14 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import morePic from "../src/more.png";
+import { signOut } from "next-auth/react";
 
 export default function MoreMenu() {
     const [isOpen, setIsOpen] = useState(false);
+
+    async function HandleSignOut() {
+        signOut();
+    }
 
     return (
         <div className="relative ml-auto">
@@ -34,7 +39,7 @@ export default function MoreMenu() {
                             <li className="hover:bg-white/10 p-3 cursor-pointer transition-colors border-b border-white/10">
                                 ⚙️ Settings
                             </li>
-                            <li className="hover:bg-red-500/80 p-3 cursor-pointer transition-colors text-red-200">
+                            <li onClick={HandleSignOut} className="hover:bg-red-500/80 p-3 cursor-pointer transition-colors text-red-200">
                                 🚪 Logout
                             </li>
                         </ul>

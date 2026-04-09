@@ -5,6 +5,7 @@ import { useSession, signIn, signOut } from "next-auth/react"
 import ListElement from "./ReactComponents/ListElement"
 import ListAddingForm from "./ReactComponents/ListAddingForm"
 import CircularProgress from "./ReactComponents/CircularSize"
+import LoginPage from "./ReactComponents/LoginPage"
 
 import { nerkoOne } from './fonts/NerkoOne';
 
@@ -50,34 +51,8 @@ export default function HomePage() {
 
   else {
     return (
-      <div className="flex flex-col items-center gap-4 mt-10">
-        <form onSubmit={HandleLogin} className="flex flex-col">
-          <p>You are not logged in.</p>
-          <input type="text" name="username" id="" placeholder="username" required />
-          <input type="password" name="password" id="" placeholder="password" required />
-          <button type="submit">
-            LogIn
-          </button>
-        </form>
-      </div>
+      <LoginPage />
     )
   }
-  async function HandleLogin(e) {
-    e.preventDefault()
 
-    const username = e.target.username.value;
-    const password = e.target.password.value;
-
-    const result = await signIn("credentials", {
-      username: username,
-      password: password,
-      redirect: false
-    });
-
-    if (result?.error)
-      alert("Invalid username or password")
-
-    window.location.reload();
-
-  }
 }
