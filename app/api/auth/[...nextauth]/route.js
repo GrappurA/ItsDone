@@ -1,5 +1,6 @@
 import NextAuth from "next-auth"
 import { SupabaseAdapter } from "@auth/supabase-adapter"
+import { createClient } from '@supabase/supabase-js'
 import CredentialsProvider from "next-auth/providers/credentials"
 
 export const authOptions = {
@@ -11,18 +12,29 @@ export const authOptions = {
         CredentialsProvider({
             name: "Credentials",
             credentials: {
-                username: { label: "Username", type: "text" },
-                password: { label: "Password", type: "text" }
+                email: { label: "email", type: "text" },
+                password: { label: "password", type: "text" }
             },
 
             async authorize(credentials) {
-                //supabase query here
+                const supabase = createClient(
+                    process.env.NEXT_PUBLIC_SUPABASE_URL,
+                    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+                )
 
-                if (credentials.username == "nika" && credentials.password == "123") {
-                    return { id: "1", name: "Nika" }
-                }
-                else {
+                const { data, error } = await supabase.auth.signInWithPassword({
+                    email: credentials.email,
+                    password: credentials.password
+                })
+
+                if (!data.user || error) {
                     return null
+                }
+
+                return {
+                    id: data.user.id,
+                    email: data.user.email,
+
                 }
             }
         })

@@ -3,11 +3,40 @@ import { form } from "motion/react-client";
 import Link from "next/link";
 import { nerkoOne } from '../fonts/NerkoOne';
 
+import { createClient } from '@supabase/supabase-js';
 
+export const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+);
 export default function RegisterPage() {
 
-    async function HandleSubmit() {
+    async function HandleSubmit(e) {
+        e.preventDefault();
 
+        const email = e.target.email.value;
+        const username = e.target.username.value;
+        const password = e.target.password.value;
+
+        const { data, error } = await supabase.auth.signUp({
+            email,
+            password,
+            options: {
+                data: {
+                    username: username
+                }
+            }
+        })
+
+        if (error) {
+            console.error('[AUTH] Signup error:', error);
+            throw new Error(error.message);
+
+            alert("Error adding user")
+        }
+
+        window.location.replace('/')
+        return data.user;
     }
 
     return (<div className={`flex flex-col justify-center items-center min-h-[85vh] ${nerkoOne.className} select-none`}>

@@ -23,6 +23,7 @@ export default function HomePage() {
   //session loggedIn/loggedOut ?
   const { data: session, status } = useSession()
 
+  //loading animation
   if (status == "loading") {
     return (
       <CircularProgress />

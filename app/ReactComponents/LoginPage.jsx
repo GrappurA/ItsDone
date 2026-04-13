@@ -1,26 +1,32 @@
+"use client"
+
 import Link from "next/link";
 import { nerkoOne } from '../fonts/NerkoOne';
+import { useRouter } from "next/router";
+
+import { createClient } from '@supabase/supabase-js'
 import { signIn } from "next-auth/react";
 
 export default function LoginPage() {
-
     async function HandleLogin(e) {
         e.preventDefault()
 
-        const username = e.target.username.value;
+        const email = e.target.email.value;
         const password = e.target.password.value;
-
         const result = await signIn("credentials", {
-            username: username,
+            email: email,
             password: password,
-            redirect: false
+            redirect: false, // Don't let NextAuth force a weird redirect
         });
 
-        if (result?.error)
-            alert("Invalid username or password")
+        if (result?.error) {
+            alert("Invalid email or password");
+            return;
+        }
 
         window.location.reload();
     }
+
 
     return (
         <div className={`flex flex-col justify-center items-center min-h-[85vh] ${nerkoOne.className} select-none`}>
@@ -33,10 +39,10 @@ export default function LoginPage() {
                 className="flex flex-col w-[400px] max-w-[90vw] p-8 text-3xl gap-5 border-black rounded-3xl border-4 bg-[#fffdce] shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]"
             >
                 <input
-                    type="text"
-                    name="username"
-                    id="username"
-                    placeholder="username"
+                    type="email"
+                    name="email"
+                    id="email"
+                    placeholder="email"
                     required
                     className="p-3 rounded-xl border-4 border-black focus:outline-none focus:bg-[#D0FFCE] transition-colors placeholder:text-gray-400"
                 />

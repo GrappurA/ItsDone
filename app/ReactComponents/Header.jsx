@@ -11,14 +11,24 @@ import profilePic from "../src/profilepic.png"
 
 export default function Header() {
     const { data: session } = useSession()
+
+    function HandleProfileClick() {
+        window.location.replace("/profile");
+    }
+
     if (session) {
         return (
             <header className="select-none w-[100%] ml-auto mr-auto bg-[#9D9695] text-4xl p-2" style={{ borderTop: "solid black 5px", borderBottom: "solid black 5px" }}>
                 <div className="flex flex flex-row items-center">
 
-                    <div className="w-14 h-14 rounded-full overflow-hidden border border-gray-200 transition-transform duration-300 hover:scale-110 cursor-pointer hover:border-white">
-                        <Image src={profilePic} width={70} height={70} alt="ProfilePic" loading="eager" />
+                    <div onClick={HandleProfileClick} className="flex items-center">
+
+                        <div className="w-14 h-14 rounded-full overflow-hidden border border-gray-200 transition-transform duration-300 hover:scale-110 cursor-pointer hover:border-white">
+                            <Image src={profilePic} width={70} height={70} alt="ProfilePic" loading="eager" />
+                        </div>
+                        <p className="font-logo text-5xl pl-2">{session.user.name}</p>
                     </div>
+
 
                     <div className="flex gap-17 ml-15">
                         <StarsCounter starsCount={50} />
