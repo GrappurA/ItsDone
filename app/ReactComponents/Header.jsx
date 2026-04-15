@@ -26,7 +26,7 @@ export default function Header() {
                         <div className="w-14 h-14 rounded-full overflow-hidden border border-gray-200 transition-transform duration-300 hover:scale-110 cursor-pointer hover:border-white">
                             <Image src={profilePic} width={70} height={70} alt="ProfilePic" loading="eager" />
                         </div>
-                        <p className="font-logo text-5xl pl-2">{session.user.name}</p>
+                        <p className="font-logo text-5xl pl-2">{session.user.username}</p>
                     </div>
 
 

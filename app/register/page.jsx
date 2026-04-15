@@ -30,9 +30,8 @@ export default function RegisterPage() {
 
         if (error) {
             console.error('[AUTH] Signup error:', error);
-            throw new Error(error.message);
-
             alert("Error adding user")
+            return;
         }
 
         window.location.replace('/')

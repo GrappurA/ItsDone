@@ -34,6 +34,7 @@ export const authOptions = {
                 return {
                     id: data.user.id,
                     email: data.user.email,
+                    username: data.user.user_metadata?.username
 
                 }
             }
@@ -50,14 +51,18 @@ export const authOptions = {
 
     callbacks: {
         async jwt({ token, user }) {
-            if (user)
+            if (user) {
                 token.id = user.id
+                token.username = user.username
+            }
             return token;
         },
 
         async session({ session, token }) {
-            if (session.user)
+            if (session.user) {
                 session.user.id = token.id
+                session.user.username = token.username
+            }
             return session;
         }
 
