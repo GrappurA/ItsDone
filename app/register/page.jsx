@@ -2,14 +2,18 @@
 import { form } from "motion/react-client";
 import Link from "next/link";
 import { nerkoOne } from '../fonts/NerkoOne';
+import ErrorPopup from "../ReactComponents/ErrorPopup"
 
 import { createClient } from '@supabase/supabase-js';
+import React from "react";
 
 export const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 );
 export default function RegisterPage() {
+
+    const [error, setError] = React.useState("")
 
     async function HandleSubmit(e) {
         e.preventDefault();
@@ -30,7 +34,7 @@ export default function RegisterPage() {
 
         if (error) {
             console.error('[AUTH] Signup error:', error);
-            alert("Error adding user")
+            setError(error.message)
             return;
         }
 
@@ -39,6 +43,10 @@ export default function RegisterPage() {
     }
 
     return (<div className={`flex flex-col justify-center items-center min-h-[85vh] ${nerkoOne.className} select-none`}>
+        <ErrorPopup
+            message={error}
+            onClose={() => setError("")}
+        />
 
         <h1 className="text-6xl mb-6 tracking-wide drop-shadow-md">Join ItsDone✔️</h1>
 
@@ -48,19 +56,19 @@ export default function RegisterPage() {
             className="flex flex-col w-[400px] max-w-[90vw] p-8 text-3xl gap-5 border-black rounded-3xl border-4 bg-[#fffdce] shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]"
         >
             <input
-                type="text"
-                name="username"
-                id="username"
-                placeholder="username"
+                type="email"
+                name="email"
+                id="email"
+                placeholder="email"
                 className="p-3 rounded-xl border-4 border-black focus:outline-none focus:bg-[#D0FFCE] transition-colors placeholder:text-gray-400"
                 required
             />
 
             <input
-                type="email"
-                name="email"
-                id="email"
-                placeholder="email"
+                type="text"
+                name="username"
+                id="username"
+                placeholder="username"
                 className="p-3 rounded-xl border-4 border-black focus:outline-none focus:bg-[#D0FFCE] transition-colors placeholder:text-gray-400"
                 required
             />
