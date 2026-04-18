@@ -12,16 +12,16 @@ export default function ListElement(props) {
     const [isOpen, setIsOpen] = React.useState(false);
     const [isEditing, setisEditing] = React.useState(false);
 
-    const itemsMap = props.itemsList.map((item, itemIndex) => {
-        return <li key={itemIndex}>{item}</li>
-    })
+    // const itemsMap = props.itemsList.map((item, itemIndex) => {
+    //     return <li key={itemIndex}>{item}</li>
+    // })
 
     return (
         <>
 
             <li onClick={() => setIsOpen(true)} className='m-2 rounded-2xl border-3 bg-white transition-all duration-300 ease-in-out hover:-translate-y-1 hover:shadow-xl cursor-pointer relative overflow-hidden group'>
                 <div className="absolute top-0 -left-[100%] w-[60%] h-full bg-gradient-to-r from-transparent via-black/[0.06] to-transparent skew-x-[-25deg] group-hover:left-[200%] transition-all duration-700 ease-in-out pointer-events-none z-10"></div>
-                <p className="text-center text-4xl relative z-20 bg-[#cefffd]">{props.listName}</p>
+                <p className="text-center text-4xl relative z-20 bg-[#cefffd]">{props.title}</p>
 
                 <section className="flex items-stretch border-y-2 border-black w-[200px]">
                     {/* Left Column: 100% */}
@@ -39,7 +39,7 @@ export default function ListElement(props) {
 
                 {/* items of the list */}
                 <ul className="p-1">
-                    {itemsMap}
+                    {/*itemsMap*/}
                 </ul>
             </li>
 

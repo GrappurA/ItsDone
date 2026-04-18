@@ -36,7 +36,8 @@ export const authOptions = {
                 return {
                     id: data.user.id,
                     email: data.user.email,
-                    username: data.user.user_metadata?.username
+                    username: data.user.user_metadata?.username,
+                    supabaseAccessToken: data.session.access_token
 
                 }
             }
@@ -56,6 +57,7 @@ export const authOptions = {
             if (user) {
                 token.id = user.id
                 token.username = user.username
+                token.supabaseAccessToken = user.supabaseAccessToken
             }
             return token;
         },
@@ -64,6 +66,7 @@ export const authOptions = {
             if (session.user) {
                 session.user.id = token.id
                 session.user.username = token.username
+                session.supabaseAccessToken = token.supabaseAccessToken
             }
             return session;
         }
