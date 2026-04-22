@@ -79,7 +79,7 @@ export default function HomePage() {
 
   if (session) {
     return (
-      <div className={`bg-[#D0FFCE] p-1 ${nerkoOne.className} select-none`}>
+      <div className={`bg-[#D0FFCE] p-1 ${nerkoOne.className} select-none h-[72.9vh]`}>
 
         <ListAddingForm setLists={setUserLists} userLists={userLists} userId={session?.user.id} session={session} />
 
