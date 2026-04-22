@@ -10,14 +10,17 @@ import LoginPage from "./ReactComponents/LoginPage"
 import { createClient } from "@supabase/supabase-js"
 
 import { nerkoOne } from './fonts/NerkoOne';
+import { data } from "motion/react-client"
 
 export default function HomePage() {
   const { data: session, status } = useSession()
 
   //{ name: "list1", itemsList: ["item2", "item2", "item32"], donePercentage: 100, done: false }
-  const [userLists, setUserLists] = React.useState([]);
+  const [userLists, setUserLists] = React.useState();
   const [isLoadingLists, setIsLoadingLists] = React.useState(true)
 
+
+  let itemsMap;
   const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
@@ -32,42 +35,40 @@ export default function HomePage() {
 
   useEffect(() => {
     async function fetchMyLists() {
-      let itemsMap;
 
       if (!session?.user?.id || !session?.supabaseAccessToken) {
         setIsLoadingLists(false)
         return
       }
 
-      try {
-        const { data, error } = await supabase
-          .from("todo_lists")
-          .select("*")
-          .eq("owner_id", session.user.id)
-          .order("created_at", { ascending: false })
+      const { data, error } = await supabase
+        .from("todo_lists")
+        .select("*")
+        .eq("owner_id", session.user.id)
+        .order("created_at", { ascending: false })
 
-        if (error) {
-          console.error(error.message)
-          return
-        }
-        setUserLists(data)
+      if (error?.message.includes("JWT expired") || error?.code == "PGRST301") {
+        signOut({ callbackUrl: "/" })
+        return
+      }
+      else if (error) {
+        console.error(error)
+        return
       }
 
-      catch (err) {
-        console.error("Unexpected error:", err)
-      }
-      finally {
-        setIsLoadingLists(false)
-      }
-
+      setUserLists(data)
+      setIsLoadingLists(false)
     }
 
     fetchMyLists()
   }, [session])
 
-  const itemsMap = userLists.map((item, itemIndex) => (
-    <ListElement key={itemIndex} id={item.owner_id} title={item.title}/*itemsList={item.itemsList} listName={item.title} donePercentage={item.donePercentage} done={item.done} */ />
-  ))
+  if (userLists) {
+    itemsMap = userLists.map((item, itemIndex) => (
+      <ListElement key={itemIndex} id={item.owner_id} title={item.title} donePercentage={item.done_percentage} isDone={item.isDone}/*itemsList={item.itemsList} listName={item.title} donePercentage={item.donePercentage} done={item.done} */ />
+    ))
+
+  }
 
   //loading animation
   if (status == "loading") {

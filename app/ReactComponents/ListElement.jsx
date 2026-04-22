@@ -6,16 +6,78 @@ import filledStar from "./src/filledStarIcon.png"
 import unfilledStar from "./src/unfilledStarIcon.png"
 import React from "react"
 import { Handlee } from "next/font/google"
+import { div, h1 } from "motion/react-client"
 
 export default function ListElement(props) {
 
+    //variables
     const [isOpen, setIsOpen] = React.useState(false);
     const [isEditing, setisEditing] = React.useState(false);
+    const [listItems, setListItems] = React.useState([])
 
-    // const itemsMap = props.itemsList.map((item, itemIndex) => {
-    //     return <li key={itemIndex}>{item}</li>
-    // })
+    let listItemsMap;
+    const donePercentageThreshhold = 60
 
+    //funcs
+    function handleAddNewTaskClick(e) {
+        e.preventDefault();
+
+        const formElement = e.currentTarget.closest('form');
+        const formData = new FormData(formElement)
+
+        const todoItemTitle = formData.get("todoTaskTitle")
+        const todoItemStatus = formData.get("todoTaskStatus")
+
+        setListItems(prevItems => [{ title: todoItemTitle, status: todoItemStatus, id: listItems.length == 0 ? 0 : listItems.length }, ...prevItems])
+    }
+
+    function handleToggleTask(itemId) {
+        const itemToToggle = listItems.find(item => item.id === itemId)
+        if (!itemToToggle)
+            return
+
+        const newStatus = itemToToggle.status == "on" ? null : "on";
+        setListItems(prevItems =>
+            prevItems.map(item =>
+                item.id == itemId ? { ...item, status: newStatus } : { ...item }
+            )
+        )
+    }
+
+    if (listItems) {
+        listItemsMap = listItems.map((item, index) => {
+            const isDone = item.status === true || item.status === "completed" || item.status === "on";
+            return (
+                <div
+                    key={index}
+                    className={`flex justify-between items-center p-5 mb-4 border-4 border-black rounded-2xl transition-all duration-300 ${isDone
+                        ? "bg-gray-100 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] translate-y-[2px]" // Pushed-down, "completed" look
+                        : "bg-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1" // Active, popping look
+                        }`}
+                >
+                    {/* Task Title (Now with Strikethrough) */}
+                    <p className={`text-3xl font-bold truncate pr-4 max-w-[70%] transition-all duration-300 ${isDone ? "line-through text-gray-400 decoration-4 decoration-black" : "text-black"
+                        }`}>
+                        {item.title}
+                    </p>
+
+                    {/* Status Badge (Now a clickable button!) */}
+                    <button
+                        onClick={() => handleToggleTask(item.id)}
+                        className={`px-4 py-2 border-4 border-black rounded-xl font-black text-xl cursor-pointer transition-all active:translate-y-[4px] active:translate-x-[4px] active:shadow-none ${isDone
+                            ? "bg-[#D0FFCE] shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]" // Green for done
+                            : "bg-[#fffdce] shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:bg-[#fff770]" // Yellow for pending
+                            }`}
+                    >
+                        {isDone ? "Done ✔" : "Pending"}
+                    </button>
+                </div>
+            )
+        }
+        )
+    }
+
+    //ui
     return (
         <>
 
@@ -32,17 +94,18 @@ export default function ListElement(props) {
                     <div className="bg-[#F2D7EE] w-full">
 
                         <div className="flex flex-1 items-center justify-center py-1 transition-transform duration-300 hover:rotate-70">
-                            <Image src={props.done ? filledStar : unfilledStar} width={36} height={36} alt="unfilled star" loading="eager" />
+                            <Image src={props.donePercentage > donePercentageThreshhold ? filledStar : unfilledStar} width={36} height={36} alt="unfilled star" loading="eager" />
                         </div>
                     </div>
                 </section>
 
                 {/* items of the list */}
                 <ul className="p-1">
-                    {/*itemsMap*/}
+                    {listItemsMap}
                 </ul>
             </li>
 
+            {/*opened item*/}
             {isOpen &&
 
                 <div
@@ -61,7 +124,7 @@ export default function ListElement(props) {
 
                         {/* HEADER */}
                         <div className="bg-[#cefffd] border-b-4 border-black p-6 relative z-20 flex justify-between items-center shrink-0">
-                            <h2 className="text-5xl font-extrabold m-0 truncate pr-4">{props.listName}</h2>
+                            <h2 className="text-5xl font-extrabold m-0 truncate pr-4">{props.title}</h2>
 
                             <section className="flex items-stretch border-4 border-black rounded-xl overflow-hidden w-[240px] h-[60px] shrink-0 bg-white shadow-md">
                                 <div className="bg-[#C3EDAB] flex items-center justify-center border-r-4 border-black px-4 w-1/2">
@@ -69,7 +132,7 @@ export default function ListElement(props) {
                                 </div>
                                 <div className="bg-[#F2D7EE] flex items-center justify-center w-1/2">
                                     <div className="transition-transform duration-300 hover:rotate-12 hover:scale-110">
-                                        <Image src={props.done ? filledStar : unfilledStar} width={42} height={42} alt="star" loading="eager" />
+                                        <Image src={props.donePercentage > donePercentageThreshhold ? filledStar : unfilledStar} width={42} height={42} alt="star" loading="eager" />
                                     </div>
                                 </div>
                             </section>
@@ -77,16 +140,47 @@ export default function ListElement(props) {
 
                         {/* BODY (Scrollable if list is too long) */}
                         <div className="flex-1 overflow-y-auto p-8 bg-white relative z-20">
+                            <form action="">
+                                <div className="flex gap-1">
+
+                                    <input
+                                        type="text"
+                                        name="todoTaskTitle"
+                                        placeholder="What needs to be done?"
+                                        className="w-full border-4 border-black rounded-xl p-3 mr-4 text-2xl outline-none shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] focus:shadow-[0px_0px_0px_0px_rgba(0,0,0,1)] hover:shadow-[0px_0px_0px_0px_rgba(0,0,0,1)] transition-all bg-white placeholder:text-gray-400"
+                                    />
+
+                                    <input
+                                        type="checkbox"
+                                        name="todoTaskStatus"
+                                        className="
+                                    appearance-none w-17 h-17 min-w-[2.5rem] 
+                                    border-4 border-black rounded-xl bg-white 
+                                    shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] 
+                                    hover:shadow-[0px_0px_0px_0px_rgba(0,0,0,1)]
+                                    cursor-pointer relative transition-all
+                                    active:translate-y-[4px] active:translate-x-[4px] active:shadow-none
+                                    checked:bg-[#D0FFCE] 
+                                    after:content-[''] checked:after:content-['✔'] 
+                                    after:absolute after:left-1/2 after:top-1/2 
+                                    after:-translate-x-1/2 after:-translate-y-1/2 
+                                    after:text-3xl after:text-black after:font-black"
+                                    />
+                                </div>
+
+                                <button onClick={handleAddNewTaskClick} type="submit" className="mt-2 w-full py-4 text-3xl font-bold border-4 border-black border-dashed rounded-2xl text-gray-400 hover:bg-[#cefffd] hover:text-black hover:border-solid hover:shadow-lg transition-all duration-300">
+                                    + Add New Task
+                                </button>
+                            </form>
+
                             <ul className="m-0 p-0">
-                                {itemsMap}
+                                {/*(itemsMap*/}
                             </ul>
                         </div>
 
                         {/* FOOTER */}
                         <div className="p-6 border-t-4 border-black bg-gray-50 relative z-20 shrink-0">
-                            <button className="w-full py-4 text-3xl font-bold border-4 border-black border-dashed rounded-2xl text-gray-400 hover:bg-[#cefffd] hover:text-black hover:border-solid hover:shadow-lg transition-all duration-300">
-                                + Add New Task
-                            </button>
+                            {listItemsMap}
                         </div>
 
                     </div>
