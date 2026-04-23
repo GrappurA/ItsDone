@@ -11,6 +11,7 @@ import { createClient } from "@supabase/supabase-js"
 
 import { nerkoOne } from './fonts/NerkoOne';
 import { data } from "motion/react-client"
+import { json } from "stream/consumers"
 
 export default function HomePage() {
   const { data: session, status } = useSession()
@@ -35,6 +36,12 @@ export default function HomePage() {
 
   useEffect(() => {
     async function fetchMyLists() {
+      //list caching
+      const cachedLists = localStorage.getItem("my_cached_lists")
+      if (cachedLists) {
+        setUserLists(JSON.parse(cachedLists))
+        setIsLoadingLists(false)
+      }
 
       if (!session?.user?.id || !session?.supabaseAccessToken) {
         setIsLoadingLists(false)
@@ -57,6 +64,7 @@ export default function HomePage() {
       }
 
       setUserLists(data)
+      localStorage.setItem("my_cached_lists", JSON.stringify(data))
       setIsLoadingLists(false)
     }
 
