@@ -4,7 +4,6 @@ import Link from "next/link";
 import { nerkoOne } from '../fonts/NerkoOne';
 import { useRouter } from "next/router";
 
-import { createClient } from '@supabase/supabase-js'
 import { signIn } from "next-auth/react";
 
 export default function LoginPage() {

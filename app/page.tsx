@@ -7,32 +7,20 @@ import ListElement from "./ReactComponents/ListElement"
 import ListAddingForm from "./ReactComponents/ListAddingForm"
 import CircularProgress from "./ReactComponents/CircularSize"
 import LoginPage from "./ReactComponents/LoginPage"
-import { createClient } from "@supabase/supabase-js"
+
+import useSupabase from "../scripts/createClient"
 
 import { nerkoOne } from './fonts/NerkoOne';
-import { data } from "motion/react-client"
-import { json } from "stream/consumers"
 
 export default function HomePage() {
   const { data: session, status } = useSession()
+  const supabase = useSupabase();
 
   //{ name: "list1", itemsList: ["item2", "item2", "item32"], donePercentage: 100, done: false }
   const [userLists, setUserLists] = React.useState();
   const [isLoadingLists, setIsLoadingLists] = React.useState(true)
 
-
   let itemsMap;
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-    {
-      global: {
-        headers: {
-          Authorization: `Bearer ${session?.supabaseAccessToken}`
-        }
-      }
-    }
-  );
 
   useEffect(() => {
     async function fetchMyLists() {
@@ -43,11 +31,13 @@ export default function HomePage() {
         setIsLoadingLists(false)
       }
 
+      //checking user
       if (!session?.user?.id || !session?.supabaseAccessToken) {
         setIsLoadingLists(false)
         return
       }
 
+      //fetching lists
       const { data, error } = await supabase
         .from("todo_lists")
         .select("*")
@@ -73,7 +63,7 @@ export default function HomePage() {
 
   if (userLists) {
     itemsMap = userLists.map((item, itemIndex) => (
-      <ListElement key={itemIndex} id={item.owner_id} title={item.title} donePercentage={item.done_percentage} isDone={item.isDone}/*itemsList={item.itemsList} listName={item.title} donePercentage={item.donePercentage} done={item.done} */ />
+      <ListElement key={itemIndex} id={item.owner_id} title={item.title} donePercentage={item.done_percentage} isDone={item.isDone}/* listName={item.title} donePercentage={item.donePercentage} done={item.done} */ />
     ))
 
   }
