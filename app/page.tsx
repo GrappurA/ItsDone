@@ -7,6 +7,7 @@ import ListElement from "./ReactComponents/ListElement"
 import ListAddingForm from "./ReactComponents/ListAddingForm"
 import CircularProgress from "./ReactComponents/CircularSize"
 import LoginPage from "./ReactComponents/LoginPage"
+import UpdatingPopUp from "./ReactComponents/UpdatingPopUp"
 
 import useSupabase from "../scripts/createClient"
 
@@ -19,6 +20,7 @@ export default function HomePage() {
   //{ name: "list1", itemsList: ["item2", "item2", "item32"], donePercentage: 100, done: false }
   const [userLists, setUserLists] = React.useState();
   const [isLoadingLists, setIsLoadingLists] = React.useState(true)
+  const [isUpdatingDB, setIsUpdatingDB] = React.useState(false);
 
   let itemsMap;
 
@@ -72,9 +74,8 @@ export default function HomePage() {
 
   if (userLists) {
     itemsMap = userLists.map((item, itemIndex) => (
-      <ListElement key={itemIndex} ownerId={item.owner_id} listId={item.id} title={item.title} donePercentage={item.done_percentage} isDone={item.isDone} userId={session?.user.id} todoItems={item.todo_tasks} />
+      <ListElement setIsUpdatingDB={setIsUpdatingDB} key={itemIndex} ownerId={item.owner_id} listId={item.id} title={item.title} donePercentage={item.done_percentage} isDone={item.isDone} userId={session?.user.id} todoItems={item.todo_tasks} />
     ))
-
   }
 
   //loading animation
@@ -87,14 +88,16 @@ export default function HomePage() {
   if (session) {
     return (
       <div className={`bg-[#D0FFCE] p-1 ${nerkoOne.className} select-none h-[72.9vh]`}>
-
+        {isUpdatingDB &&
+          <UpdatingPopUp setUpdatingDB={setIsUpdatingDB} />
+        }
         <ListAddingForm setLists={setUserLists} userLists={userLists} userId={session?.user.id} session={session} />
 
         <div id="CanvasForTasks" className="text-3xl border-black-200 rounded-xl border-4 w-[700px] mt-1 overflow-hidden">
           <p className="p-1 text-4xl bg-[#fffdce]">Your Lists</p>
           <hr className="w-[100%] " />
 
-          <ul className='grid grid-cols-3 gap-1s justify-items-center'>
+          <ul className='grid grid-cols-3 gap-1 justify-items-center'>
             {itemsMap}
           </ul>
 

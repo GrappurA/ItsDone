@@ -13,6 +13,7 @@ export default function ListElement(props) {
     const [isOpen, setIsOpen] = React.useState(false);
     //every list has its own itemsList(list of todo items)
     const [itemsList, setItemsList] = React.useState(props.todoItems)
+    //updating db state
 
     let listItemsMap;
 
@@ -22,29 +23,38 @@ export default function ListElement(props) {
     const donePercentageThreshhold = 60
     let donePercentage = 0;
     if (itemsList.length > 0) {
-        donePercentage = itemsList.filter(item => item.status == "on").length / itemsList.length * 100;
+        donePercentage = Math.round(itemsList.filter(item => item.status == "on").length / itemsList.length * 100);
     }
 
     //add new todo item
     async function handleAddNewTaskClick(formData) {
         const todoItemTitle = formData.get("todoTaskTitle")
         const todoItemStatus = formData.get("todoTaskStatus")
+        try {
+            props.setIsUpdatingDB(true)
+            const { data, error } = await supabase
+                .from("todo_tasks")
+                .insert({
+                    list_id: props.listId,
+                    title: todoItemTitle,
+                    status: todoItemStatus == null ? false : true,
+                    owner_id: props.ownerId
+                })
+            if (error)
+                props.setIsUpdatingDB(false)
+        } catch (err) {
+            alert(err.message)
+            props.setIsUpdatingDB(false)
+        }
+        finally {
+            props.setIsUpdatingDB(false)
+        }
 
-        const { data, error } = await supabase
-            .from("todo_tasks")
-            .insert({
-                list_id: props.listId,
-                title: todoItemTitle,
-                status: todoItemStatus == null ? false : true,
-                owner_id: props.ownerId
-            })
-        if (error)
-            alert(error.message)
         setItemsList(prevItems => [{ title: todoItemTitle, status: todoItemStatus, id: itemsList.length == 0 ? 0 : itemsList.length, listId: props.listId }, ...prevItems])
     }
 
     //toggle 'done' status
-    function handleToggleTask(itemId) {
+    async function handleToggleTask(itemId) {
         const itemToToggle = itemsList.find(item => item.id === itemId)
         if (!itemToToggle)
             return
@@ -56,6 +66,19 @@ export default function ListElement(props) {
                 item.id == itemId ? { ...item, status: newStatus } : { ...item },
             )
         )
+        try {
+            props.setIsUpdatingDB(true)
+            const { error } = await supabase.
+                from("todo_tasks")
+                .update({ "status": newStatus })
+                .eq("id", itemId)
+        } catch (err) {
+            alert(error)
+            props.setIsUpdatingDB(false)
+        }
+        finally {
+            props.setIsUpdatingDB(false)
+        }
     }
 
     if (itemsList) {
@@ -90,7 +113,7 @@ export default function ListElement(props) {
         )
     }
 
-    //ui
+    // closed item
     return (
         <>
             <li onClick={() => setIsOpen(true)} className='m-2 rounded-2xl border-3 bg-white transition-all duration-300 ease-in-out hover:-translate-y-1 hover:shadow-xl cursor-pointer relative overflow-hidden group'>
@@ -121,10 +144,9 @@ export default function ListElement(props) {
             {isOpen &&
 
                 <div
-                    className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4"
-                    onClick={() => setIsOpen(false)} // 2. Clicking this background layer closes the modal
+                    className="fixed inset-0 z-30 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4"
+                    onClick={() => setIsOpen(false)}
                 >
-
                     {/* 3. THE MODAL CONTENT: Stop click events from bubbling up to the overlay */}
                     <div
                         className='w-[800px] max-h-[90vh] flex flex-col rounded-3xl border-4 border-black bg-white shadow-2xl relative overflow-hidden group'
@@ -151,7 +173,7 @@ export default function ListElement(props) {
                         </div>
 
                         {/* BODY (Scrollable if list is too long) */}
-                        <div className="flex-1 overflow-y-auto p-8 bg-white relative z-20">
+                        <div className="flex-1 p-8 bg-white relative z-20">
                             <form action={handleAddNewTaskClick}>
                                 <div className="flex gap-1">
 
@@ -185,14 +207,10 @@ export default function ListElement(props) {
                                     + Add New Task
                                 </button>
                             </form>
-
-                            <ul className="m-0 p-0">
-                                {/*(itemsMap*/}
-                            </ul>
                         </div>
 
                         {/* FOOTER */}
-                        <div className="p-6 border-t-4 border-black bg-gray-50 relative z-20 shrink-0">
+                        <div className="p-6 border-t-4 border-black bg-gray-50 relative z-20 shrink-0 overflow-auto scroll-auto">
                             {listItemsMap}
                         </div>
 
