@@ -38,24 +38,33 @@ export default function HomePage() {
       }
 
       //fetching lists
-      const { data, error } = await supabase
-        .from("todo_lists")
-        .select("*")
-        .eq("owner_id", session.user.id)
-        .order("created_at", { ascending: false })
+      try {
+        const { data, error } = await supabase
+          .from("todo_lists")
+          .select(`
+            *,
+            todo_tasks (id, list_id, owner_id, title, status) 
+        `)
+          .eq("owner_id", session.user.id)
+          .order("created_at", { ascending: false })
 
-      if (error?.message.includes("JWT expired") || error?.code == "PGRST301") {
-        signOut({ callbackUrl: "/" })
-        return
-      }
-      else if (error) {
-        console.error(error)
-        return
-      }
+        if (error?.message.includes("JWT expired") || error?.code == "PGRST301") {
+          signOut({ callbackUrl: "/" })
+          return
+        }
+        else if (error) {
+          console.error(error)
+          return
+        }
 
-      setUserLists(data)
-      localStorage.setItem("my_cached_lists", JSON.stringify(data))
-      setIsLoadingLists(false)
+        setUserLists(data)
+        localStorage.setItem("my_cached_lists", JSON.stringify(data))
+      } catch (err) {
+        console.warn("Ignored browser execution error:", err)
+      }
+      finally {
+        setIsLoadingLists(false)
+      }
     }
 
     fetchMyLists()
@@ -63,7 +72,7 @@ export default function HomePage() {
 
   if (userLists) {
     itemsMap = userLists.map((item, itemIndex) => (
-      <ListElement key={itemIndex} id={item.owner_id} title={item.title} donePercentage={item.done_percentage} isDone={item.isDone}/* listName={item.title} donePercentage={item.donePercentage} done={item.done} */ />
+      <ListElement key={itemIndex} ownerId={item.owner_id} listId={item.id} title={item.title} donePercentage={item.done_percentage} isDone={item.isDone} userId={session?.user.id} todoItems={item.todo_tasks} />
     ))
 
   }

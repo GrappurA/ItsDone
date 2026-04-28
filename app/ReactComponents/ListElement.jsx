@@ -2,51 +2,58 @@
 
 import Image from "next/image"
 import filledStar from "./src/filledStarIcon.png"
-
 import unfilledStar from "./src/unfilledStarIcon.png"
+
 import React from "react"
-import { Handlee } from "next/font/google"
-import { div, h1 } from "motion/react-client"
+import useSupabase from "../../scripts/createClient"
 
 export default function ListElement(props) {
 
     //variables
     const [isOpen, setIsOpen] = React.useState(false);
-    const [isEditing, setisEditing] = React.useState(false);
-    const [itemsList, setListItems] = React.useState([])
+    //every list has its own itemsList(list of todo items)
+    const [itemsList, setItemsList] = React.useState(props.todoItems)
 
     let listItemsMap;
 
+    const supabase = useSupabase();
+
+    //donePercentage calculation
     const donePercentageThreshhold = 60
     let donePercentage = 0;
     if (itemsList.length > 0) {
         donePercentage = itemsList.filter(item => item.status == "on").length / itemsList.length * 100;
     }
-    //funcs
-    function handleAddNewTaskClick(e) {
-        e.preventDefault();
 
-        const formElement = e.currentTarget.closest('form');
-        const formData = new FormData(formElement)
-
+    //add new todo item
+    async function handleAddNewTaskClick(formData) {
         const todoItemTitle = formData.get("todoTaskTitle")
         const todoItemStatus = formData.get("todoTaskStatus")
 
-        setListItems(prevItems => [{ title: todoItemTitle, status: todoItemStatus, id: itemsList.length == 0 ? 0 : itemsList.length }, ...prevItems])
+        const { data, error } = await supabase
+            .from("todo_tasks")
+            .insert({
+                list_id: props.listId,
+                title: todoItemTitle,
+                status: todoItemStatus == null ? false : true,
+                owner_id: props.ownerId
+            })
+        if (error)
+            alert(error.message)
+        setItemsList(prevItems => [{ title: todoItemTitle, status: todoItemStatus, id: itemsList.length == 0 ? 0 : itemsList.length, listId: props.listId }, ...prevItems])
     }
 
+    //toggle 'done' status
     function handleToggleTask(itemId) {
         const itemToToggle = itemsList.find(item => item.id === itemId)
         if (!itemToToggle)
             return
 
-
         //updating status of a todo_task
         const newStatus = itemToToggle.status == "on" ? null : "on";
-        setListItems(prevItems =>
+        setItemsList(prevItems =>
             prevItems.map(item =>
                 item.id == itemId ? { ...item, status: newStatus } : { ...item },
-
             )
         )
     }
@@ -60,9 +67,8 @@ export default function ListElement(props) {
                     className={`flex justify-between items-center p-5 mb-4 border-4 border-black rounded-2xl transition-all duration-300 ${isDone
                         ? "bg-gray-100 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] translate-y-[2px]" // Pushed-down, "completed" look
                         : "bg-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1" // Active, popping look
-                        }`}
-                >
-                    {/* Task Title (Now with Strikethrough) */}
+                        }`}>
+
                     <p className={`text-3xl font-bold truncate pr-4 max-w-[70%] transition-all duration-300 ${isDone ? "line-through text-gray-400 decoration-4 decoration-black" : "text-black"
                         }`}>
                         {item.title}
@@ -146,7 +152,7 @@ export default function ListElement(props) {
 
                         {/* BODY (Scrollable if list is too long) */}
                         <div className="flex-1 overflow-y-auto p-8 bg-white relative z-20">
-                            <form action="">
+                            <form action={handleAddNewTaskClick}>
                                 <div className="flex gap-1">
 
                                     <input
@@ -154,6 +160,7 @@ export default function ListElement(props) {
                                         name="todoTaskTitle"
                                         placeholder="What needs to be done?"
                                         className="w-full border-4 border-black rounded-xl p-3 mr-4 text-2xl outline-none shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] focus:shadow-[0px_0px_0px_0px_rgba(0,0,0,1)] hover:shadow-[0px_0px_0px_0px_rgba(0,0,0,1)] transition-all bg-white placeholder:text-gray-400"
+                                        required
                                     />
 
                                     <input
@@ -174,7 +181,7 @@ export default function ListElement(props) {
                                     />
                                 </div>
 
-                                <button onClick={handleAddNewTaskClick} type="submit" className="mt-2 w-full py-4 text-3xl font-bold border-4 border-black border-dashed rounded-2xl text-gray-400 hover:bg-[#cefffd] hover:text-black hover:border-solid hover:shadow-lg transition-all duration-300">
+                                <button type="submit" className="mt-2 w-full py-4 text-3xl font-bold border-4 border-black border-dashed rounded-2xl text-gray-400 hover:bg-[#cefffd] hover:text-black hover:border-solid hover:shadow-lg transition-all duration-300">
                                     + Add New Task
                                 </button>
                             </form>

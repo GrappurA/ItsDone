@@ -13,8 +13,8 @@ export default function ListAddingForm(props) {
         const todoListTitle = formData.get("todoList");
         props.setLists(prevLists => [{ title: todoListTitle, }, ...prevLists])
 
-        const { data, error } = await supabase.
-            from("todo_lists")
+        const { data, error } = await supabase
+            .from("todo_lists")
             .insert({
                 title: todoListTitle,
                 owner_id: props.userId
