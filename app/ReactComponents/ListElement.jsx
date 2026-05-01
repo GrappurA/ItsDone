@@ -23,7 +23,7 @@ export default function ListElement(props) {
     const donePercentageThreshhold = 60
     let donePercentage = 0;
     if (itemsList.length > 0) {
-        donePercentage = Math.round(itemsList.filter(item => item.status == "on").length / itemsList.length * 100);
+        donePercentage = Math.round(itemsList.filter(item => item.status == true).length / itemsList.length * 100);
     }
 
     //add new todo item
@@ -31,7 +31,7 @@ export default function ListElement(props) {
         const todoItemTitle = formData.get("todoTaskTitle")
         const todoItemStatus = formData.get("todoTaskStatus")
         try {
-            props.setIsUpdatingDB(true)
+            props.setIsUpdatingData(true)
             const { data, error } = await supabase
                 .from("todo_tasks")
                 .insert({
@@ -41,13 +41,13 @@ export default function ListElement(props) {
                     owner_id: props.ownerId
                 })
             if (error)
-                props.setIsUpdatingDB(false)
+                props.setIsUpdatingData(false)
         } catch (err) {
             alert(err.message)
-            props.setIsUpdatingDB(false)
+            props.setIsUpdatingData(false)
         }
         finally {
-            props.setIsUpdatingDB(false)
+            props.setIsUpdatingData(false)
         }
 
         setItemsList(prevItems => [{ title: todoItemTitle, status: todoItemStatus, id: itemsList.length == 0 ? 0 : itemsList.length, listId: props.listId }, ...prevItems])
@@ -66,18 +66,21 @@ export default function ListElement(props) {
                 item.id == itemId ? { ...item, status: newStatus } : { ...item },
             )
         )
+        //updating the donePercentage
+        donePercentage = Math.round(itemsList.filter(item => item.status == true).length / itemsList.length * 100);
+
         try {
-            props.setIsUpdatingDB(true)
+            props.setIsUpdatingData(true)
             const { error } = await supabase.
                 from("todo_tasks")
                 .update({ "status": newStatus })
                 .eq("id", itemId)
         } catch (err) {
-            alert(error)
-            props.setIsUpdatingDB(false)
+            alert(error.message)
+            props.setIsUpdatingData(false)
         }
         finally {
-            props.setIsUpdatingDB(false)
+            props.setIsUpdatingData(false)
         }
     }
 
@@ -87,9 +90,10 @@ export default function ListElement(props) {
             return (
                 <div
                     key={index}
-                    className={`flex justify-between items-center p-5 mb-4 border-4 border-black rounded-2xl transition-all duration-300 ${isDone
-                        ? "bg-gray-100 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] translate-y-[2px]" // Pushed-down, "completed" look
-                        : "bg-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1" // Active, popping look
+                    className={`flex justify-between items-center p-5 mb-4 border-4 border-black rounded-2xl transition-all duration-300 
+                        shadow-[7px_7px_0px_0px_rgba(0,0,0,1)] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]
+                          ${isDone ? "bg-gray-100 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] translate-y-[2px]" // Pushed-down, "completed" look
+                            : "bg-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1" // Active, popping look
                         }`}>
 
                     <p className={`text-3xl font-bold truncate pr-4 max-w-[70%] transition-all duration-300 ${isDone ? "line-through text-gray-400 decoration-4 decoration-black" : "text-black"
@@ -100,11 +104,11 @@ export default function ListElement(props) {
                     {/* Status Badge (Now a clickable button!) */}
                     <button
                         onClick={() => handleToggleTask(item.id)}
-                        className={`px-4 py-2 border-4 border-black rounded-xl font-black text-xl cursor-pointer transition-all active:translate-y-[4px] active:translate-x-[4px] active:shadow-none ${isDone
-                            ? "bg-[#D0FFCE] shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]" // Green for done
-                            : "bg-[#fffdce] shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:bg-[#fff770]" // Yellow for pending
-                            }`}
-                    >
+                        className={`shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]
+                            px-4 py-2 border-4 border-black rounded-xl font-black text-xl cursor-pointer transition-all active:translate-y-[4px] active:translate-x-[4px]  active:shadow-none ${isDone
+                                ? "bg-[#D0FFCE] shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]" // Green for done
+                                : "bg-[#fffdce] shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:bg-[#fff770] " // Yellow for pending
+                            }`}>
                         {isDone ? "Done ✔" : "Pending"}
                     </button>
                 </div>
@@ -121,13 +125,11 @@ export default function ListElement(props) {
                 <p className="text-center text-4xl relative z-20 bg-[#cefffd]">{props.title}</p>
 
                 <section className="flex items-stretch border-y-2 border-black w-[200px]">
-                    {/* Left Column: 100% */}
                     <div className="bg-[#C3EDAB] flex items-center justify-center border-r-2 border-black px-2 py-1">
                         <p className="font-bold text-3xl leading-none m-0">{donePercentage}%</p>
                     </div>
-                    {/* Right Column: Star */}
-                    <div className="bg-[#F2D7EE] w-full">
 
+                    <div className="bg-[#F2D7EE] w-full">
                         <div className="flex flex-1 items-center justify-center py-1 transition-transform duration-300 hover:rotate-70">
                             <Image src={donePercentage > donePercentageThreshhold ? filledStar : unfilledStar} width={36} height={36} alt="unfilled star" loading="eager" />
                         </div>
