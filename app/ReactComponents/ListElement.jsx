@@ -16,7 +16,6 @@ export default function ListElement(props) {
     const [itemsList, setItemsList] = React.useState(props.todoItems || [])
     React.useEffect(() => {
         setItemsList(props.todoItems || [])
-
     }, [props.todoItems])
 
     let listItemsMap;
@@ -28,6 +27,9 @@ export default function ListElement(props) {
     let donePercentage;
     if (itemsList.length > 0) {
         donePercentage = Math.round(itemsList.filter(item => item.status == true || item.status == "completed" || item.status == "on").length / itemsList.length * 100);
+    }
+    else {
+        donePercentage = 0;
     }
 
     //add new todo item
