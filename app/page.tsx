@@ -17,7 +17,6 @@ export default function HomePage() {
   const { data: session, status } = useSession()
   const supabase = useSupabase();
 
-  //{ name: "list1", itemsList: ["item2", "item2", "item32"], donePercentage: 100, done: false }
   const [userLists, setUserLists] = React.useState();
   const [isLoadingLists, setIsLoadingLists] = React.useState(true)
   const [isUpdatingData, setIsUpdatingData] = React.useState(false);
@@ -25,11 +24,18 @@ export default function HomePage() {
   let itemsMap;
 
   function needsUpdate(cachedLists, dbLists) {
-    if (cachedLists.length != dbLists.length)
+    const parsedCachedLists = JSON.parse(cachedLists)
+    if (!parsedCachedLists)
       return true
 
-    const newestCacheTime = new Date(cachedLists[0].updated_at).getTime();
-    const newestDbTime = new Date(dbLists[0].updated_at).getTime();
+    if (parsedCachedLists.length != dbLists.length)
+      return true
+
+    if (parsedCachedLists.length == 0 || dbLists.length == 0)
+      return false
+
+    const newestCacheTime = Math.max(...parsedCachedLists.map(listItem => new Date(listItem.updated_at).getTime()))
+    const newestDbTime = Math.max(...dbLists.map(listItem => new Date(listItem.updated_at).getTime()))
 
     return newestDbTime > newestCacheTime;
   }
@@ -70,11 +76,16 @@ export default function HomePage() {
         }
 
         //check browsers cache vs fetched lists and invoke 'updating data' popup
-        if (needsUpdate(cachedLists, data)) {
+        if (data && needsUpdate(cachedLists, data)) {
+
           setIsUpdatingData(true)
+          setTimeout(() => {
+            setIsUpdatingData(false)
+          }, 1500)
+
           setUserLists(data)
           localStorage.setItem("my_cached_lists", JSON.stringify(data))
-          setIsUpdatingData(false)
+
         }
 
       } catch (err) {
@@ -90,7 +101,10 @@ export default function HomePage() {
 
   if (userLists) {
     itemsMap = userLists.map((item, itemIndex) => (
-      <ListElement setIsUpdatingData={setIsUpdatingData} key={itemIndex} ownerId={item.owner_id} listId={item.id} title={item.title} donePercentage={item.done_percentage} isDone={item.isDone} userId={session?.user.id} todoItems={item.todo_tasks} />
+      <ListElement setIsUpdatingData={setIsUpdatingData}
+        key={item.id} ownerId={item.owner_id} listId={item.id} userId={session?.user.id}
+        title={item.title} donePercentage={item.done_percentage} isDone={item.isDone} todoItems={item.todo_tasks}
+      />
     ))
   }
 

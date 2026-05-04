@@ -11,9 +11,13 @@ export default function ListElement(props) {
 
     //variables
     const [isOpen, setIsOpen] = React.useState(false);
+
     //every list has its own itemsList(list of todo items)
-    const [itemsList, setItemsList] = React.useState(props.todoItems)
-    //updating db state
+    const [itemsList, setItemsList] = React.useState(props.todoItems || [])
+    React.useEffect(() => {
+        setItemsList(props.todoItems || [])
+
+    }, [props.todoItems])
 
     let listItemsMap;
 
@@ -21,9 +25,9 @@ export default function ListElement(props) {
 
     //donePercentage calculation
     const donePercentageThreshhold = 60
-    let donePercentage = 0;
+    let donePercentage;
     if (itemsList.length > 0) {
-        donePercentage = Math.round(itemsList.filter(item => item.status == true).length / itemsList.length * 100);
+        donePercentage = Math.round(itemsList.filter(item => item.status == true || item.status == "completed" || item.status == "on").length / itemsList.length * 100);
     }
 
     //add new todo item
@@ -66,8 +70,6 @@ export default function ListElement(props) {
                 item.id == itemId ? { ...item, status: newStatus } : { ...item },
             )
         )
-        //updating the donePercentage
-        donePercentage = Math.round(itemsList.filter(item => item.status == true).length / itemsList.length * 100);
 
         try {
             props.setIsUpdatingData(true)
