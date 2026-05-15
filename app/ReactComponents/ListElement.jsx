@@ -6,6 +6,7 @@ import unfilledStar from "./src/unfilledStarIcon.png"
 
 import React from "react"
 import useSupabase from "../../scripts/createClient"
+import { i } from "motion/react-client"
 
 export default function ListElement(props) {
 
@@ -66,7 +67,7 @@ export default function ListElement(props) {
             return
 
         //updating status of a todo_task
-        const newStatus = itemToToggle.status == "on" ? null : "on";
+        const newStatus = itemToToggle.status == true ? false : true
         setItemsList(prevItems =>
             prevItems.map(item =>
                 item.id == itemId ? { ...item, status: newStatus } : { ...item },
@@ -88,6 +89,30 @@ export default function ListElement(props) {
         }
     }
 
+    //delete task
+    async function handleDeleteTask(itemId) {
+        if (!itemId)
+            return undefined
+        setItemsList(prevItemList => prevItemList.filter(item => item.id != itemId))
+
+        try {
+            props.setIsUpdatingData(true)
+            const { error } = await supabase.
+                from("todo_tasks").
+                delete().
+                eq("id", itemId)
+
+            if (error)
+                throw error
+        } catch (err) {
+            alert("failed to delete task")
+            console.log(err.message)
+        }
+        finally {
+            props.setIsUpdatingData(false)
+        }
+    }
+
     if (itemsList) {
         listItemsMap = itemsList.map((item, index) => {
             const isDone = item.status === true || item.status === "completed" || item.status === "on";
@@ -99,6 +124,22 @@ export default function ListElement(props) {
                           ${isDone ? "bg-gray-100 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] translate-y-[2px]" // Pushed-down, "completed" look
                             : "bg-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1" // Active, popping look
                         }`}>
+
+                    <button
+                        onClick={() => handleDeleteTask(item.id)}
+                        title="Delete Task"
+                        className="
+        flex items-center justify-center w-12 h-12 shrink-0
+        bg-[#ff4a4a] text-black text-2xl font-black leading-none
+        border-4 border-black rounded-xl 
+        shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] 
+        transition-all cursor-pointer
+        hover:bg-[#ff2b2b] hover:shadow-[0px_0px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1
+        active:translate-y-[4px] active:translate-x-[4px] active:shadow-none
+    "
+                    >
+                        X
+                    </button>
 
                     <p className={`text-3xl font-bold truncate pr-4 max-w-[70%] transition-all duration-300 ${isDone ? "line-through text-gray-400 decoration-4 decoration-black" : "text-black"
                         }`}>
@@ -148,16 +189,13 @@ export default function ListElement(props) {
 
             {/*opened item*/}
             {isOpen &&
-
                 <div
                     className="fixed inset-0 z-30 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4"
-                    onClick={() => setIsOpen(false)}
-                >
+                    onClick={() => setIsOpen(false)}>
                     {/* 3. THE MODAL CONTENT: Stop click events from bubbling up to the overlay */}
                     <div
                         className='w-[800px] max-h-[90vh] flex flex-col rounded-3xl border-4 border-black bg-white shadow-2xl relative overflow-hidden group'
-                        onClick={(e) => e.stopPropagation()}
-                    >
+                        onClick={(e) => e.stopPropagation()}>
 
                         {/* Shading Animation */}
                         <div className="absolute top-0 -left-[100%] w-[60%] h-full bg-gradient-to-r from-transparent via-black/[0.06] to-transparent skew-x-[-25deg] hover:left-[200%] transition-all duration-700 ease-in-out pointer-events-none z-10"></div>
