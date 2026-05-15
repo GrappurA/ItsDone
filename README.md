@@ -16,13 +16,3 @@ A high-performance, full-stack task management application featuring a bold neo-
 * **Optimistic UI Updates:** Task toggling and deletions update on the screen instantly before the database confirms the transaction, making the app feel incredibly responsive.
 * **Relational Data Modeling:** seamless linking between `todo_lists` and `todo_tasks` using PostgreSQL Foreign Keys, bypassing the need for physical arrays in the parent table.
 * **Automated Database Triggers:** Custom PostgreSQL functions utilize the `moddatetime` extension to automatically track caching timestamps for deeply nested task relationships.
-
-## 🛠️ Getting Started
-
-### Prerequisites
-Make sure you have Node.js installed and a Supabase project set up with the required tables (`todo_lists` and `todo_tasks`).
-
-### 1. Clone the repository
-```bash
-git clone [https://github.com/your-username/your-repo-name.git](https://github.com/your-username/your-repo-name.git)
-cd your-repo-name
