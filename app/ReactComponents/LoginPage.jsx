@@ -29,9 +29,7 @@ export default function LoginPage() {
 
     return (
         <div className={`flex flex-col justify-center items-center min-h-[85vh] ${nerkoOne.className} select-none`}>
-
             <h1 className="text-6xl mb-6 tracking-wide drop-shadow-md">Welcome Back!</h1>
-
             {/* The Form: Thick borders, cream background, and the hard black shadow */}
             <form
                 onSubmit={HandleLogin}

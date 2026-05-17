@@ -6,15 +6,41 @@ import StarsCounter from "./StarsCounter"
 import Image from "next/image"
 import { useSession } from "next-auth/react"
 import profilePic from "../src/profilepic.png"
+import useSupabase from "../../scripts/createClient"
+import React, { useEffect } from "react"
+import { redirect } from 'next/navigation';
+
+export default function Header(props) {
 
 
-
-export default function Header() {
-    const { data: session } = useSession()
 
     function HandleProfileClick() {
         window.location.replace("/profile");
     }
+    const { data: session } = useSession()
+    const supabase = useSupabase();
+    useEffect(() => {
+        async function fetchStatsData() {
+            //checking user
+            if (!session?.user?.id || !session?.supabaseAccessToken) {
+                return
+            }
+
+            try {
+                const { data, error } = await supabase
+                    .from("profiles")
+                    .select("*")
+                    .eq("id", session.user.id)
+
+                setStreakCount(data.current_streak)
+                setStarsCount(data.star_count)
+            } catch (error) {
+                alert("error loading basic statisctics data:", error)
+            }
+
+        }
+        fetchStatsData()
+    }, [session])
 
     if (session) {
         return (
@@ -29,13 +55,12 @@ export default function Header() {
                         <p className="font-logo text-5xl pl-2">{session.user.username}</p>
                     </div>
 
-
                     <div className="flex gap-17 ml-15">
                         <StarsCounter starsCount={50} />
                         <StreakCounter streakCount={50} />
                     </div>
 
-                    <p className="font-logo text-5xl ml-[20%]"><u className="decoration-[#D0FFCE] decoration-auto underline-offset-[10px]">ItsDone✔️</u></p>
+                    <p onClick={() => redirect("/")} className="font-logo text-5xl ml-[20%]"><u className="decoration-[#D0FFCE] decoration-auto underline-offset-[10px]">ItsDone✔️</u></p>
 
                     <MoreMenu />
                 </div>
