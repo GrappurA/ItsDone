@@ -5,3 +5,7 @@
     /* Map it to a Tailwind class name like 'font-logo' */
     --font-logo: "Nerko One", serif;
 }
+
+.table-blue {
+    background-color: #cefffd;
+}

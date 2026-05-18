@@ -11,14 +11,15 @@ import React, { useEffect } from "react"
 import { redirect } from 'next/navigation';
 
 export default function Header(props) {
+    const { data: session } = useSession()
+    const supabase = useSupabase();
 
-
+    const [starsCount, setStarsCount] = React.useState(0)
 
     function HandleProfileClick() {
         window.location.replace("/profile");
     }
-    const { data: session } = useSession()
-    const supabase = useSupabase();
+
     useEffect(() => {
         async function fetchStatsData() {
             //checking user
@@ -32,10 +33,9 @@ export default function Header(props) {
                     .select("*")
                     .eq("id", session.user.id)
 
-                setStreakCount(data.current_streak)
-                setStarsCount(data.star_count)
+                setStarsCount(data[0].star_count)
             } catch (error) {
-                alert("error loading basic statisctics data:", error)
+                //alert("error loading basic statisctics data:", error)
             }
 
         }
@@ -56,7 +56,7 @@ export default function Header(props) {
                     </div>
 
                     <div className="flex gap-17 ml-15">
-                        <StarsCounter starsCount={50} />
+                        <StarsCounter starsCount={starsCount} />
                         <StreakCounter streakCount={50} />
                     </div>
 
