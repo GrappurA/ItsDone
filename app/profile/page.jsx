@@ -1,8 +1,59 @@
+"use client"
+
 import { div } from "motion/react-client";
 import { nerkoOne } from '../fonts/NerkoOne';
+import StarProgressChart from '../ReactComponents/Plot'
+import LoginPage from "../ReactComponents/LoginPage"
+import CircularProgress from "../ReactComponents/CircularSize"
+
+import useSupabase from "../../scripts/createClient"
+import React, { useEffect } from "react";
+import { useSession } from "next-auth/react";
 
 export default function StatsPage() {
+    const supabase = useSupabase()
+    const { data: session, status } = useSession()
 
+    const [isLoadingData, setIsLoadingData] = React.useState(true)
+    let plotData = {};
+    //const cachedStats = localStorage.setItem("my_cached_stats")
+
+    useEffect(() => {
+        async function fetchStats() {
+            if (!session?.user?.id || !session?.supabaseAccessToken) {
+                setIsLoadingData(false)
+                return
+            }
+            try {
+                setIsLoadingData(true)
+                const [data, error] = await supabase
+                    .from("profiles")
+                    .select("*")
+                    .eq("id", session.user.id)
+
+                plotData = data.map(object => {
+                    const { created_at, done_percentage } = object
+                    const newobj = { created_at, done_percentage };
+                    return newobj
+                })
+
+                alert(plotData)
+
+            } catch (err) {
+                alert(err)
+            }
+            finally {
+                setIsLoadingData(false)
+            }
+        }
+    }, [session])
+
+    alert(plotData)
+    if (status == "loading") {
+        return (
+            <CircularProgress />
+        )
+    }
     return (
         <div className={`bg-[#d0ffce] p-2 ${nerkoOne.className} h-[72.9vh]`} >
             <p className="text-[62px] bg-[#fffdce] w-fit border-4 rounded-2xl mb-3 pl-2 pr-2">Your Stats</p>
@@ -51,7 +102,12 @@ export default function StatsPage() {
                     </div>
                 </div>
 
-                <div className="w-fit">plot here</div>
+                <div className="w-fit">
+                    {
+                        //<StarProgressChart data={ } />
+                    }
+
+                </div>
             </div>
         </div >
     )
