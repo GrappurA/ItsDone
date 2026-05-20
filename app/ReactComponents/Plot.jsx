@@ -2,22 +2,13 @@
 import React from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
-// 1. Your Mock Data
-const progressData = [
-    { date: 'May 1', percentage: 40 },
-    { date: 'May 5', percentage: 65 }, // Will get a filled star!
-    { date: 'May 10', percentage: 55 },
-    { date: 'May 15', percentage: 85 }, // Filled star!
-    { date: 'May 20', percentage: 50 },
-];
-
 // 2. The Custom Star Component
 const BrutalistStarDot = (props) => {
     // Recharts automatically passes cx (X coordinate), cy (Y coordinate), and the data payload
     const { cx, cy, payload } = props;
 
-    const donePercentageThreshold = 60; // Same logic as your ListElement!
-    const isFilled = payload.percentage >= donePercentageThreshold;
+    // 🚨 UPDATED: Now looking for payload.done_percentage
+    const isFilled = payload.done_percentage >= props.doneThreshold;
 
     return (
         // We offset the SVG by -15px so the center of the star sits exactly on the data line
@@ -45,9 +36,13 @@ const BrutalistStarDot = (props) => {
 // 3. The Custom Brutalist Tooltip
 const BrutalistTooltip = ({ active, payload, label }) => {
     if (active && payload && payload.length) {
+
+        // Optional: If 'label' (created_at) is a long ugly timestamp, you can format it here cleanly:
+        const cleanDate = new Date(label).toLocaleDateString("en-US", { month: "short", day: "numeric" });
+
         return (
             <div className="bg-white border-4 border-black p-3 rounded-xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-                <p className="font-black text-xl text-black border-b-2 border-black pb-1 mb-1">{label}</p>
+                <p className="font-black text-xl text-black border-b-2 border-black pb-1 mb-1">{cleanDate}</p>
                 <p className="font-bold text-lg text-black">
                     Completed: <span className="bg-[#D0FFCE] px-2 py-1 rounded-md border-2 border-black">{payload[0].value}%</span>
                 </p>
@@ -58,22 +53,29 @@ const BrutalistTooltip = ({ active, payload, label }) => {
 };
 
 // 4. The Main Chart Component
-export default function StarProgressChart() {
+export default function StarProgressChart(props) {
     return (
-        <div className="w-full h-[350px] bg-[#cefffd] border-4 border-black rounded-2xl p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+        <div className="w-[600px] h-[350px] bg-[#cefffd] border-4 border-black rounded-2xl p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
 
             <h2 className="text-3xl font-black mb-6 text-black tracking-wide">
                 Progress Timeline
             </h2>
 
             <ResponsiveContainer width="100%" height="85%">
-                <LineChart data={progressData} margin={{ top: 10, right: 20, left: -20, bottom: 0 }}>
+                <LineChart data={props.data} margin={{ top: 10, right: 20, left: -20, bottom: 0 }}>
 
                     {/* Subtle grid lines */}
                     <CartesianGrid strokeDasharray="3 3" stroke="#000" strokeOpacity={0.2} />
 
                     {/* Thick black axes */}
-                    <XAxis dataKey="date" stroke="#000" strokeWidth={3} tick={{ fill: '#000', fontWeight: 'bold' }} />
+                    {/* 🚨 UPDATED dataKey to created_at */}
+                    <XAxis
+                        dataKey="created_at"
+                        stroke="#000"
+                        strokeWidth={3}
+                        tick={{ fill: '#000', fontWeight: 'bold' }}
+                        tickFormatter={(timeStr) => new Date(timeStr).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+                    />
                     <YAxis stroke="#000" strokeWidth={3} tick={{ fill: '#000', fontWeight: 'bold' }} domain={[0, 100]} />
 
                     {/* Hooking in the custom tooltip */}
@@ -82,11 +84,11 @@ export default function StarProgressChart() {
                     {/* The Main Line */}
                     <Line
                         type="monotone"
-                        dataKey="percentage"
+                        dataKey="done_percentage" /* 🚨 UPDATED dataKey */
                         stroke="#000"
-                        strokeWidth={5}
-                        dot={<BrutalistStarDot />}           // 👈 YOUR CUSTOM INACTIVE STARS
-                        activeDot={{ r: 0 }}                 // Hides Recharts default hover dot
+                        strokeWidth={6}
+                        dot={<BrutalistStarDot doneThreshold={props.doneThreshold} />}
+                        activeDot={{ r: 0 }}
                         animationDuration={1500}
                         animationEasing="ease-out"
                     />
