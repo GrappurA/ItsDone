@@ -34,6 +34,21 @@ export default function Header(props) {
                     .eq("id", session.user.id)
 
                 setStarsCount(data[0].star_count)
+
+                const channel = await supabase
+                    .channel('profiles-changes')
+                    .on('postgres_changes',
+                        {
+                            event: '*',
+                            schema: 'public',
+                            table: 'profiles'
+                        },
+                        (payload) => {
+                            setStarsCount(payload.new.star_count)
+                        }
+                    )
+                    .subscribe()
+
             } catch (error) {
                 //alert("error loading basic statisctics data:", error)
             }

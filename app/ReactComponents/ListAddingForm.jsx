@@ -11,7 +11,7 @@ export default function ListAddingForm(props) {
     async function HandleClick(formData) {
 
         const todoListTitle = formData.get("todoList");
-        props.setLists(prevLists => [{ title: todoListTitle, }, ...prevLists])
+        props.setLists(prevLists => [{ title: todoListTitle, key: 1 }, ...prevLists])
 
         const { data, error } = await supabase
             .from("todo_lists")
@@ -19,7 +19,9 @@ export default function ListAddingForm(props) {
                 title: todoListTitle,
                 owner_id: props.userId
             })
-
+        if (error) {
+            alert("error adding list: List has not been added " + error.message)
+        }
     }
 
     return (

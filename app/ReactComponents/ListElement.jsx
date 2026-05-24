@@ -47,8 +47,10 @@ export default function ListElement(props) {
                     status: todoItemStatus == null ? false : true,
                     owner_id: props.ownerId
                 })
-            if (error)
+            if (error) {
+                throw error
                 props.setIsUpdatingData(false)
+            }
         } catch (err) {
             alert(err.message)
             props.setIsUpdatingData(false)

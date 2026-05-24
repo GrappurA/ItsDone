@@ -100,9 +100,9 @@ export default function HomePage() {
   }, [session])
 
   if (userLists) {
-    itemsMap = userLists.map((item) => (
+    itemsMap = userLists.map((item, index) => (
       <ListElement setIsUpdatingData={setIsUpdatingData}
-        key={item.id} ownerId={item.owner_id} listId={item.id} userId={session?.user.id}
+        key={index} ownerId={item.owner_id} listId={item.id} userId={session?.user.id}
         title={item.title} donePercentage={item.done_percentage} isDone={item.isDone} todoItems={item.todo_tasks}
       />
     ))
