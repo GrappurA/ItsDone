@@ -18,7 +18,7 @@ export default function StatsPage() {
     //const [profileData, setProfileData] = React.useState();
     const [listsData, setListsData] = React.useState([])
     const [doneThreshold, setDoneThreshold] = React.useState(0)
-    let plotData = [];
+    let [plotData, setPlotData] = React.useState([]);
     //const cachedStats = localStorage.setItem("my_cached_stats")
 
     useEffect(() => {
@@ -45,12 +45,15 @@ export default function StatsPage() {
                 setDoneThreshold(settingsData[0]?.done_threshold)
                 setListsData(listData)
 
-                listData.forEach(element => {
-                    const { created_at, done_percentage } = element
-                    const date = new Date(created_at).toWellFormed()
-                    plotData.push(data.created_at)
+                const formattedListData = listData.map(element => {
+                    return {
+                        created_at: element.created_at,
+                        done_percentage: element.done_percentage
+                    }
                 })
-                alert(plotData)
+
+                setPlotData(formattedListData)
+                //alert(plotData)
             } catch (err) {
                 alert(err.message)
             }
