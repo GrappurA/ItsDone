@@ -1,34 +1,41 @@
 "use client"
 
-import { data, div } from "motion/react-client";
-import { nerkoOne } from '../fonts/NerkoOne';
-import StarProgressChart from '../ReactComponents/Plot'
-import LoginPage from "../ReactComponents/LoginPage"
-import CircularProgress from "../ReactComponents/CircularSize"
-
 import useSupabase from "../../scripts/createClient"
 import React, { useEffect } from "react";
 import { useSession } from "next-auth/react";
+import { data, div } from "motion/react-client";
+import dynamic from "next/dynamic";
+const StarProgressChart = dynamic(() => import('../ReactComponents/Plot'),
+    {
+        loading: () => <p className="text-3xl font-bold">Loading Chart Data...</p>,
+        ssr: false
+    })
+
+import { nerkoOne } from '../fonts/NerkoOne';
+import LoginPage from "../ReactComponents/LoginPage"
+import CircularProgress from "../ReactComponents/CircularSize"
 
 export default function StatsPage() {
     const supabase = useSupabase()
     const { data: session, status } = useSession()
 
-    const [isLoadingData, setIsLoadingData] = React.useState(true)
-    //const [profileData, setProfileData] = React.useState();
-    const [listsData, setListsData] = React.useState([])
-    const [doneThreshold, setDoneThreshold] = React.useState(0)
-    let [plotData, setPlotData] = React.useState([]);
-    //const cachedStats = localStorage.setItem("my_cached_stats")
+    const [userData, setUserData] = React.useState({
+        isLoadingData: true,
+        listsData: [],
+        doneThreshold: 50,
+        plotData: []
+    })
+
+    const [dayCount, setDayCount] = React.useState(7)
 
     useEffect(() => {
         async function fetchStats() {
             if (!session?.user?.id || !session?.supabaseAccessToken || session == undefined) {
-                setIsLoadingData(false)
+                setUserData(prev => ({ ...prev, isLoadingData: false }))
                 return
             }
             try {
-                setIsLoadingData(true)
+                setUserData(prev => ({ ...prev, isLoadingData: true }))
                 const [listResult, settingsResult] = await Promise.all(
                     [
                         // supabase.from("profiles").select("*").eq("id", session.user.id).single(),
@@ -42,8 +49,7 @@ export default function StatsPage() {
                 if (settingsErr || listsError) throw settingsErr || listsError;
 
                 //setProfileData(profileData)
-                setDoneThreshold(settingsData[0]?.done_threshold)
-                setListsData(listData)
+                setUserData(prev => ({ ...prev, listsData: listData, doneThreshold: settingsData[0]?.done_threshold }))
 
                 const formattedListData = listData.map(element => {
                     return {
@@ -52,19 +58,22 @@ export default function StatsPage() {
                     }
                 })
 
-                setPlotData(formattedListData)
-                //alert(plotData)
+                setUserData(prev => ({ ...prev, plotData: formattedListData }))
             } catch (err) {
                 alert(err.message)
+                if (err?.message.includes("JWT expired") || err?.code == "PGRST301") {
+                    signOut({ callbackUrl: "/" })
+                    return
+                }
             }
             finally {
-                setIsLoadingData(false)
+                setUserData(prev => ({ ...prev, isLoadingData: true }))
             }
         }
         fetchStats();
     }, [session])
 
-    if (status == "loading") { return (<CircularProgress />) }
+    if (status == "loading") { return (<div className="bg-[#d0ffce] h-[72.9vh] w-full" />) }
     if (!session) { return (< LoginPage />) }
 
     return (
@@ -116,10 +125,9 @@ export default function StatsPage() {
                 </div>
 
                 <div className="w-fit">
-                    {
-                        <StarProgressChart doneThreshold={doneThreshold} data={plotData} />
-                    }
+                    {<StarProgressChart doneThreshold={userData.doneThreshold} data={userData.plotData} setDayCount={setDayCount} />}
                 </div>
+
             </div>
         </div >
     )

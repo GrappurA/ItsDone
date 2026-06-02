@@ -2,8 +2,6 @@
 import React from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
-// 2. The Custom Star Component
-// 2. The Upgraded Custom Star Component
 const BrutalistStarDot = (props) => {
     const { cx, cy, payload } = props;
     const isFilled = payload.done_percentage >= props.doneThreshold;
@@ -33,7 +31,7 @@ const BrutalistStarDot = (props) => {
     );
 };
 
-// 3. The Custom Brutalist Tooltip
+// The Custom Brutalist Tooltip
 const BrutalistTooltip = ({ active, payload, label }) => {
     if (active && payload && payload.length) {
 
@@ -52,14 +50,24 @@ const BrutalistTooltip = ({ active, payload, label }) => {
     return null;
 };
 
-// 4. The Main Chart Component
+// The Main Chart Component
 export default function StarProgressChart(props) {
     return (
         <div className="w-[600px] h-[350px] bg-[#cefffd] border-4 border-black rounded-2xl p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
 
-            <h2 className="text-3xl font-black mb-6 text-black tracking-wide">
-                Progress Timeline
-            </h2>
+            <div className='flex w-full'>
+                <h2 className="w-[100%] text-3xl font-black mb-6 text-black tracking-wide">
+                    Progress Timeline
+                </h2>
+
+                <div className='flex w-115 border-5 rounded-2xl p-0 text-2xl overflow-hidden'>
+                    <button onClick={() => props.setDayCount(7)} className="border-r-4 p-2 hover:bg-green-300 hover:scale-105">7d</button>
+                    <button onClick={() => props.setDayCount(14)} className="border-r-4 p-2 hover:bg-green-300 hover:scale-105">14d</button>
+                    <button onClick={() => props.setDayCount(30)} className="border-r-4 p-2 hover:bg-green-300 hover:scale-105">30d</button>
+                    <button onClick={() => props.setDayCount(183)} className="border-r-4 p-2 hover:bg-green-300 hover:scale-105">6mo</button>
+                    <button onClick={() => props.setDayCount(365)} className=" p-2 hover:bg-green-300 hover:scale-105">1y</button>
+                </div>
+            </div>
 
             <ResponsiveContainer width="100%" height="85%">
                 <LineChart data={props.data} margin={{ top: 25, right: 20, left: -20, bottom: 10 }} >
@@ -96,6 +104,7 @@ export default function StarProgressChart(props) {
                     />
                 </LineChart>
             </ResponsiveContainer>
+
         </div>
     );
 }
