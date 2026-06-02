@@ -4,6 +4,7 @@ import useSupabase from "../../scripts/createClient"
 import React, { useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { data, div } from "motion/react-client";
+
 import dynamic from "next/dynamic";
 const StarProgressChart = dynamic(() => import('../ReactComponents/Plot'),
     {
@@ -25,8 +26,6 @@ export default function StatsPage() {
         doneThreshold: 50,
         plotData: []
     })
-
-    const [dayCount, setDayCount] = React.useState(7)
 
     useEffect(() => {
         async function fetchStats() {
@@ -51,14 +50,14 @@ export default function StatsPage() {
                 //setProfileData(profileData)
                 setUserData(prev => ({ ...prev, listsData: listData, doneThreshold: settingsData[0]?.done_threshold }))
 
-                const formattedListData = listData.map(element => {
+                let formattedListData = listData.map(element => {
                     return {
                         created_at: element.created_at,
                         done_percentage: element.done_percentage
                     }
                 })
-
                 setUserData(prev => ({ ...prev, plotData: formattedListData }))
+
             } catch (err) {
                 alert(err.message)
                 if (err?.message.includes("JWT expired") || err?.code == "PGRST301") {
@@ -125,7 +124,7 @@ export default function StatsPage() {
                 </div>
 
                 <div className="w-fit">
-                    {<StarProgressChart doneThreshold={userData.doneThreshold} data={userData.plotData} setDayCount={setDayCount} />}
+                    {<StarProgressChart doneThreshold={userData.doneThreshold} data={userData.plotData} />}
                 </div>
 
             </div>

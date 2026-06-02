@@ -52,6 +52,8 @@ const BrutalistTooltip = ({ active, payload, label }) => {
 
 // The Main Chart Component
 export default function StarProgressChart(props) {
+    const [dayCount, setDayCount] = React.useState(7)
+    let data = props.data.slice(0, dayCount)
     return (
         <div className="w-[600px] h-[350px] bg-[#cefffd] border-4 border-black rounded-2xl p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
 
@@ -61,16 +63,16 @@ export default function StarProgressChart(props) {
                 </h2>
 
                 <div className='flex w-115 border-5 rounded-2xl p-0 text-2xl overflow-hidden'>
-                    <button onClick={() => props.setDayCount(7)} className="border-r-4 p-2 hover:bg-green-300 hover:scale-105">7d</button>
-                    <button onClick={() => props.setDayCount(14)} className="border-r-4 p-2 hover:bg-green-300 hover:scale-105">14d</button>
-                    <button onClick={() => props.setDayCount(30)} className="border-r-4 p-2 hover:bg-green-300 hover:scale-105">30d</button>
-                    <button onClick={() => props.setDayCount(183)} className="border-r-4 p-2 hover:bg-green-300 hover:scale-105">6mo</button>
-                    <button onClick={() => props.setDayCount(365)} className=" p-2 hover:bg-green-300 hover:scale-105">1y</button>
+                    <button onClick={() => setDayCount(7)} className="border-r-4 p-2 hover:bg-green-300 hover:scale-105">7d</button>
+                    <button onClick={() => setDayCount(14)} className="border-r-4 p-2 hover:bg-green-300 hover:scale-105">14d</button>
+                    <button onClick={() => setDayCount(30)} className="border-r-4 p-2 hover:bg-green-300 hover:scale-105">30d</button>
+                    <button onClick={() => setDayCount(183)} className="border-r-4 p-2 hover:bg-green-300 hover:scale-105">6mo</button>
+                    <button onClick={() => setDayCount(365)} className=" p-2 hover:bg-green-300 hover:scale-105">1y</button>
                 </div>
             </div>
 
             <ResponsiveContainer width="100%" height="85%">
-                <LineChart data={props.data} margin={{ top: 25, right: 20, left: -20, bottom: 10 }} >
+                <LineChart key={dayCount} data={data} margin={{ top: 25, right: 20, left: -20, bottom: 10 }} >
 
                     {/* Subtle grid lines */}
                     <CartesianGrid strokeDasharray="3 3" stroke="#000" strokeOpacity={0.2} />

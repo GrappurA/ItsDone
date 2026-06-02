@@ -17,7 +17,7 @@ export default function Header(props) {
     const [starsCount, setStarsCount] = React.useState(0)
 
     function HandleProfileClick() {
-        window.location.replace("/profile");
+        window.location.replace("/stats");
     }
 
     useEffect(() => {
