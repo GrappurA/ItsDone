@@ -19,7 +19,7 @@ export default function StatsBoard({ initialList, initialSettings }) {
     const [doneThreshold, setDoneThreshold] = React.useState(initialSettings.data[0]?.done_threshold || 0,)
 
     return (
-        <div className={`bg-[#d0ffce] p-2 ${nerkoOne.className} h-[72.9vh]`} >
+        <div className={`bg-[#d0ffce] p-2 ${nerkoOne.className} h-[75.1vh]`} >
             <p className="text-[62px] bg-[#fffdce] w-fit border-4 rounded-2xl mb-3 pl-2 pr-2">Your Stats</p>
 
             <div className="grid grid-cols-2 gap-6">
