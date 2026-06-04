@@ -48,6 +48,7 @@ export default function Header(props) {
                         }
                     )
                     .subscribe()
+                //unsub from channel
 
             } catch (error) {
                 //alert("error loading basic statisctics data:", error)
