@@ -1,68 +1,22 @@
 "use client"
 
+import React, { useEffect } from "react";
+import { useSession } from "next-auth/react";
 import { data, div } from "motion/react-client";
+
 import { nerkoOne } from '../fonts/NerkoOne';
-import StarProgressChart from '../ReactComponents/Plot'
 import LoginPage from "../ReactComponents/LoginPage"
 import CircularProgress from "../ReactComponents/CircularSize"
 
-import useSupabase from "../../scripts/createClient"
-import React, { useEffect } from "react";
-import { useSession } from "next-auth/react";
+import dynamic from "next/dynamic";
+const StarProgressChart = dynamic(() => import('../ReactComponents/Plot'),
+    {
+        loading: () => <p className="text-3xl font-bold">Loading Chart Data...</p>,
+        ssr: false
+    })
 
-export default function StatsPage() {
-    const supabase = useSupabase()
-    const { data: session, status } = useSession()
-
-    const [isLoadingData, setIsLoadingData] = React.useState(true)
-    //const [profileData, setProfileData] = React.useState();
-    const [listsData, setListsData] = React.useState([])
-    const [doneThreshold, setDoneThreshold] = React.useState(0)
-    let plotData = [];
-    //const cachedStats = localStorage.setItem("my_cached_stats")
-
-    useEffect(() => {
-        async function fetchStats() {
-            if (!session?.user?.id || !session?.supabaseAccessToken || session == undefined) {
-                setIsLoadingData(false)
-                return
-            }
-            try {
-                setIsLoadingData(true)
-                const [listResult, settingsResult] = await Promise.all(
-                    [
-                        // supabase.from("profiles").select("*").eq("id", session.user.id).single(),
-                        supabase.from("todo_lists").select("*").eq("owner_id", session.user.id),
-                        supabase.from("user_settings").select("*").eq("user_id", session.user.id)
-                    ]
-                )
-                //const { data: profileData, error: profileErr } = profileResult;
-                const { data: listData, error: listsError } = listResult
-                const { data: settingsData, error: settingsErr } = settingsResult;
-                if (settingsErr || listsError) throw settingsErr || listsError;
-
-                //setProfileData(profileData)
-                setDoneThreshold(settingsData[0]?.done_threshold)
-                setListsData(listData)
-
-                listData.forEach(element => {
-                    const { created_at, done_percentage } = element
-                    const date = new Date(created_at).toWellFormed()
-                    plotData.push(data.created_at)
-                })
-                alert(plotData)
-            } catch (err) {
-                alert(err.message)
-            }
-            finally {
-                setIsLoadingData(false)
-            }
-        }
-        fetchStats();
-    }, [session])
-
-    if (status == "loading") { return (<CircularProgress />) }
-    if (!session) { return (< LoginPage />) }
+export default function StatsBoard({ initialList, initialSettings }) {
+    const [doneThreshold, setDoneThreshold] = React.useState(initialSettings.data[0]?.done_threshold || 0,)
 
     return (
         <div className={`bg-[#d0ffce] p-2 ${nerkoOne.className} h-[72.9vh]`} >
@@ -113,10 +67,9 @@ export default function StatsPage() {
                 </div>
 
                 <div className="w-fit">
-                    {
-                        <StarProgressChart doneThreshold={doneThreshold} data={plotData} />
-                    }
+                    {<StarProgressChart doneThreshold={doneThreshold} data={initialList.data} />}
                 </div>
+
             </div>
         </div >
     )

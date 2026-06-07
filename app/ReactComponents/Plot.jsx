@@ -2,23 +2,21 @@
 import React from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
-// 2. The Custom Star Component
 const BrutalistStarDot = (props) => {
-    // Recharts automatically passes cx (X coordinate), cy (Y coordinate), and the data payload
     const { cx, cy, payload } = props;
-
-    // 🚨 UPDATED: Now looking for payload.done_percentage
     const isFilled = payload.done_percentage >= props.doneThreshold;
 
     return (
-        // We offset the SVG by -15px so the center of the star sits exactly on the data line
-        <svg x={cx - 15} y={cy - 15} width="30" height="30" viewBox="0 0 24 24" overflow="visible">
+        // 1. Increased width/height to 42 for bigger stars
+        // 2. Offset x and y by exactly half (-21) to keep them perfectly centered on the line
+        // 3. Expanded the viewBox from -2 to 30 to add invisible padding so the shadow doesn't clip
+        <svg x={cx - 21} y={cy - 21} width="42" height="42" viewBox="-2 -2 30 30" overflow="visible">
 
-            {/* Brutalist Hard Shadow */}
+            {/* Brutalist Hard Shadow (Pushed a tiny bit further down for maximum thickness) */}
             <polygon
                 points="12,2 15,9 22,9 17,14 19,21 12,17 5,21 7,14 2,9 9,9"
                 fill="black"
-                transform="translate(3, 3)"
+                transform="translate(4, 4)"
             />
 
             {/* Actual Star */}
@@ -33,7 +31,7 @@ const BrutalistStarDot = (props) => {
     );
 };
 
-// 3. The Custom Brutalist Tooltip
+// The Custom Brutalist Tooltip
 const BrutalistTooltip = ({ active, payload, label }) => {
     if (active && payload && payload.length) {
 
@@ -52,17 +50,32 @@ const BrutalistTooltip = ({ active, payload, label }) => {
     return null;
 };
 
-// 4. The Main Chart Component
+// The Main Chart Component
 export default function StarProgressChart(props) {
+    const [dayCount, setDayCount] = React.useState(7)
+    let data = React.useMemo(() => {
+        return props.data.slice(0, dayCount)
+    }, [props.data, dayCount])
+    //let data = props.data.slice(0, dayCount)
     return (
         <div className="w-[600px] h-[350px] bg-[#cefffd] border-4 border-black rounded-2xl p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
 
-            <h2 className="text-3xl font-black mb-6 text-black tracking-wide">
-                Progress Timeline
-            </h2>
+            <div className='flex w-full'>
+                <h2 className="w-[100%] text-3xl font-black mb-6 text-black tracking-wide">
+                    Progress Timeline
+                </h2>
+
+                <div className='flex w-115 border-5 rounded-2xl p-0 text-2xl overflow-hidden'>
+                    <button onClick={() => setDayCount(7)} className="border-r-4 p-2 hover:bg-green-300 hover:scale-105">7d</button>
+                    <button onClick={() => setDayCount(14)} className="border-r-4 p-2 hover:bg-green-300 hover:scale-105">14d</button>
+                    <button onClick={() => setDayCount(30)} className="border-r-4 p-2 hover:bg-green-300 hover:scale-105">30d</button>
+                    <button onClick={() => setDayCount(183)} className="border-r-4 p-2 hover:bg-green-300 hover:scale-105">6mo</button>
+                    <button onClick={() => setDayCount(365)} className=" p-2 hover:bg-green-300 hover:scale-105">1y</button>
+                </div>
+            </div>
 
             <ResponsiveContainer width="100%" height="85%">
-                <LineChart data={props.data} margin={{ top: 10, right: 20, left: -20, bottom: 0 }}>
+                <LineChart key={dayCount} data={data} margin={{ top: 25, right: 20, left: -20, bottom: 10 }} >
 
                     {/* Subtle grid lines */}
                     <CartesianGrid strokeDasharray="3 3" stroke="#000" strokeOpacity={0.2} />
@@ -75,8 +88,10 @@ export default function StarProgressChart(props) {
                         strokeWidth={3}
                         tick={{ fill: '#000', fontWeight: 'bold' }}
                         tickFormatter={(timeStr) => new Date(timeStr).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+                        padding={{ bottom: 15, left: 40, right: 40, }}
+                        margin={{}}
                     />
-                    <YAxis stroke="#000" strokeWidth={3} tick={{ fill: '#000', fontWeight: 'bold' }} domain={[0, 100]} />
+                    <YAxis padding={{ bottom: 30 }} stroke="#000" strokeWidth={3} tick={{ fill: '#000', fontWeight: 'bold', fontSize: 22 }} domain={[0, 100]} />
 
                     {/* Hooking in the custom tooltip */}
                     <Tooltip content={<BrutalistTooltip />} cursor={{ stroke: 'black', strokeWidth: 2, strokeDasharray: '5 5' }} />
@@ -94,6 +109,7 @@ export default function StarProgressChart(props) {
                     />
                 </LineChart>
             </ResponsiveContainer>
+
         </div>
     );
 }

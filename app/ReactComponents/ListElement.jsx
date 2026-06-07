@@ -5,7 +5,7 @@ import filledStar from "./src/filledStarIcon.png"
 import unfilledStar from "./src/unfilledStarIcon.png"
 
 import React from "react"
-import useSupabase from "../../scripts/createClient"
+import createBrowserClient from "../../scripts/createBrowserClient"
 import { i } from "motion/react-client"
 
 export default function ListElement(props) {
@@ -21,7 +21,7 @@ export default function ListElement(props) {
 
     let listItemsMap;
 
-    const supabase = useSupabase();
+    const supabase = createBrowserClient();
 
     //donePercentage calculation
     const donePercentageThreshhold = 60
@@ -219,7 +219,7 @@ export default function ListElement(props) {
                         </div>
 
                         {/* BODY (Scrollable if list is too long) */}
-                        <div className="flex-1 p-8 bg-white relative z-20">
+                        <div className="shrink-0 p-8 bg-white relative z-20">
                             <form action={handleAddNewTaskClick}>
                                 <div className="flex gap-1">
 
@@ -256,7 +256,7 @@ export default function ListElement(props) {
                         </div>
 
                         {/* FOOTER */}
-                        <div className="p-6 border-t-4 border-black bg-gray-50 relative z-20 shrink-0 overflow-auto scroll-auto">
+                        <div className="p-6 border-t-4 border-black bg-gray-50 relative z-20 flex-1 overflow-y-auto">
                             {listItemsMap}
                         </div>
 

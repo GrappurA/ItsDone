@@ -2,11 +2,11 @@
 
 import Link from "next/link";
 import { nerkoOne } from '../fonts/NerkoOne';
-import { useRouter } from "next/router";
 
 import { signIn } from "next-auth/react";
 
 export default function LoginPage() {
+
     async function HandleLogin(e) {
         e.preventDefault()
 
@@ -15,7 +15,8 @@ export default function LoginPage() {
         const result = await signIn("credentials", {
             email: email,
             password: password,
-            redirect: false, // Don't let NextAuth force a weird redirect
+            redirect: true,
+            callbackUrl: "/home"
         });
 
         if (result?.error) {
@@ -23,7 +24,7 @@ export default function LoginPage() {
             return;
         }
 
-        window.location.reload();
+        //window.location.reload();
     }
 
 
