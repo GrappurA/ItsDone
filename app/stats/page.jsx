@@ -2,9 +2,8 @@
 import { getServerSession } from "next-auth/next";
 import { redirect } from "next/navigation";
 import { authOptions } from "../api/auth/[...nextauth]/route"
-import createClient from "@supabase/supabase-js";
 import StatsBoard from "./StatsBoard";
-import { createClient } from "../../scripts/createServerClient";
+import createClient from "../../scripts/createServerClient";
 
 export default async function StatsPage() {
     const session = await getServerSession(authOptions)

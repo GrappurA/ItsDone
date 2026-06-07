@@ -2,10 +2,10 @@
 
 import { useState } from "react";
 
-import UpdatingPopUp from "./ReactComponents/UpdatingPopUp"
-import ListAddingForm from "./ReactComponents/ListAddingForm"
-import { nerkoOne } from './fonts/NerkoOne';
-import ListElement from "./ReactComponents/ListElement"
+import UpdatingPopUp from "../ReactComponents/UpdatingPopUp"
+import ListAddingForm from "../ReactComponents/ListAddingForm"
+import { nerkoOne } from '../fonts/NerkoOne';
+import ListElement from "../ReactComponents/ListElement"
 
 export default function MainDashboard({ initialLists, session }) {
 
