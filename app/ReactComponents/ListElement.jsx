@@ -5,7 +5,7 @@ import filledStar from "./src/filledStarIcon.png"
 import unfilledStar from "./src/unfilledStarIcon.png"
 
 import React from "react"
-import useSupabase from "../../scripts/createClient"
+import createBrowserClient from "../../scripts/createBrowserClient"
 import { i } from "motion/react-client"
 
 export default function ListElement(props) {
@@ -21,7 +21,7 @@ export default function ListElement(props) {
 
     let listItemsMap;
 
-    const supabase = useSupabase();
+    const supabase = createBrowserClient();
 
     //donePercentage calculation
     const donePercentageThreshhold = 60

@@ -6,13 +6,13 @@ import StarsCounter from "./StarsCounter"
 import Image from "next/image"
 import { useSession } from "next-auth/react"
 import profilePic from "../src/profilepic.png"
-import useSupabase from "../../scripts/createClient"
+import createBrowserClient from "../../scripts/createBrowserClient"
 import React, { useEffect } from "react"
 import { redirect } from 'next/navigation';
 
 export default function Header(props) {
     const { data: session } = useSession()
-    const supabase = useSupabase();
+    const supabase = createBrowserClient();
 
     const [starsCount, setStarsCount] = React.useState(0)
 

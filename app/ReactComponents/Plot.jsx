@@ -53,7 +53,10 @@ const BrutalistTooltip = ({ active, payload, label }) => {
 // The Main Chart Component
 export default function StarProgressChart(props) {
     const [dayCount, setDayCount] = React.useState(7)
-    let data = props.data.slice(0, dayCount)
+    let data = React.useMemo(() => {
+        return props.data.slice(0, dayCount)
+    }, [props.data, dayCount])
+    //let data = props.data.slice(0, dayCount)
     return (
         <div className="w-[600px] h-[350px] bg-[#cefffd] border-4 border-black rounded-2xl p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
 
@@ -85,7 +88,7 @@ export default function StarProgressChart(props) {
                         strokeWidth={3}
                         tick={{ fill: '#000', fontWeight: 'bold' }}
                         tickFormatter={(timeStr) => new Date(timeStr).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
-                        padding={{ bottom: 15, left: 40, right: 40, }} /* 👈 THE MAGIC FIX */
+                        padding={{ bottom: 15, left: 40, right: 40, }}
                         margin={{}}
                     />
                     <YAxis padding={{ bottom: 30 }} stroke="#000" strokeWidth={3} tick={{ fill: '#000', fontWeight: 'bold', fontSize: 22 }} domain={[0, 100]} />

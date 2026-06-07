@@ -9,6 +9,7 @@ export default function MoreMenu() {
     const [isOpen, setIsOpen] = useState(false);
 
     async function HandleSignOut() {
+        localStorage.clear();
         signOut();
     }
 

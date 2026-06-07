@@ -2,11 +2,11 @@ import { title } from "process";
 import { createClient } from "@supabase/supabase-js";
 import { useSession } from "next-auth/react";
 
-import useSupabase from "../../scripts/createClient"
+import createBrowserClient from "../../scripts/createBrowserClient"
 
 export default function ListAddingForm(props) {
 
-    const supabase = useSupabase()
+    const supabase = createBrowserClient()
 
     async function HandleClick(formData) {
 
