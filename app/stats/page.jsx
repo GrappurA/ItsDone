@@ -7,7 +7,7 @@ import createClient from "../../scripts/createServerClient";
 
 export default async function StatsPage() {
     const session = await getServerSession(authOptions)
-    const supabase = createClient();
+    const supabase = await createClient();
 
     if (!session) {
         redirect("/")

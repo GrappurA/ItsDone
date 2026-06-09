@@ -4,18 +4,18 @@ import Image from "next/image"
 import filledStar from "./src/filledStarIcon.png"
 import unfilledStar from "./src/unfilledStarIcon.png"
 
-import React from "react"
+import { useEffect, useState } from "react"
 import createBrowserClient from "../../scripts/createBrowserClient"
 import { i } from "motion/react-client"
 
 export default function ListElement(props) {
 
     //variables
-    const [isOpen, setIsOpen] = React.useState(false);
+    const [isOpen, setIsOpen] = useState(false);
 
     //every list has its own itemsList(list of todo items)
-    const [itemsList, setItemsList] = React.useState(props.todoItems || [])
-    React.useEffect(() => {
+    const [itemsList, setItemsList] = useState(props.todoItems || [])
+    useEffect(() => {
         setItemsList(props.todoItems || [])
     }, [props.todoItems])
 
@@ -37,9 +37,21 @@ export default function ListElement(props) {
     async function handleAddNewTaskClick(formData) {
         const todoItemTitle = formData.get("todoTaskTitle")
         const todoItemStatus = formData.get("todoTaskStatus")
+
+        const isDone = todoItemStatus == null ? false : true
+        const fakeItemId = Date.now()
+        const optimisticItem = {
+            list_id: props.listId,
+            title: todoItemTitle,
+            status: isDone,
+            owner_id: props.ownerId,
+            id: fakeItemId
+        }
+        setItemsList(prevItems => [optimisticItem, ...prevItems])
+
         try {
             props.setIsUpdatingData(true)
-            const { data, error } = await supabase
+            const { data: realTask, error } = await supabase
                 .from("todo_tasks")
                 .insert({
                     list_id: props.listId,
@@ -47,19 +59,26 @@ export default function ListElement(props) {
                     status: todoItemStatus == null ? false : true,
                     owner_id: props.ownerId
                 })
+                .select()
+                .single()
+
             if (error) {
-                throw error
                 props.setIsUpdatingData(false)
+                throw error
             }
+            setItemsList(prevList =>
+                prevList.map(item =>
+                    item.id === fakeItemId ? { ...item, id: realTask.id } : item)
+            )
+
         } catch (err) {
-            alert(err.message)
+            alert("failed to save task" + err.message)
             props.setIsUpdatingData(false)
+            setItemsList(prevList => prevList.filter(item => item.id != fakeItemId))
         }
         finally {
             props.setIsUpdatingData(false)
         }
-
-        setItemsList(prevItems => [{ title: todoItemTitle, status: todoItemStatus, id: itemsList.length == 0 ? 0 : itemsList.length, listId: props.listId }, ...prevItems])
     }
 
     //toggle 'done' status
@@ -83,7 +102,7 @@ export default function ListElement(props) {
                 .update({ "status": newStatus })
                 .eq("id", itemId)
         } catch (err) {
-            alert(error.message)
+            alert("failed to update your data" + error.message)
             props.setIsUpdatingData(false)
         }
         finally {

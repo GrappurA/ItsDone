@@ -9,9 +9,17 @@ export default function ListAddingForm(props) {
     const supabase = createBrowserClient()
 
     async function HandleClick(formData) {
-
+        const fakeId = Date.now()
         const todoListTitle = formData.get("todoList");
-        props.setLists(prevLists => [{ title: todoListTitle, key: 1 }, ...prevLists])
+        const optimisticList = {
+            id: fakeId,
+            title: todoListTitle,
+            owner_id: props.userId,
+            done_percentage: 0,
+            todo_tasks: []
+        };
+
+        props.setLists(prevLists => [optimisticList, ...prevLists]);
 
         const { data, error } = await supabase
             .from("todo_lists")
@@ -19,8 +27,15 @@ export default function ListAddingForm(props) {
                 title: todoListTitle,
                 owner_id: props.userId
             })
+            .select()
+            .single()
         if (error) {
             alert("error adding list: List has not been added " + error.message)
+        }
+        else {
+            props.setLists(prevLists =>
+                prevLists.map(list => list.id === fakeId ? data : list)
+            );
         }
     }
 
