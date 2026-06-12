@@ -19,7 +19,7 @@ export default async function HomePage() {
     .select(`*,
        todo_tasks(id, list_id, owner_id, title, status)`)
     .eq("owner_id", session.user.id)
-    .order("created_at", { ascending: true })
+    .order("created_at", { ascending: false })
 
   console.log(initialLists)
   if (error) {

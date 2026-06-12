@@ -33,28 +33,32 @@ export default function Header(props) {
                     .select("*")
                     .eq("id", session.user.id)
 
-                setStarsCount(data[0].star_count)
+                setStarsCount(data[0]?.star_count)
 
-                const channel = await supabase
-                    .channel('profiles-changes')
-                    .on('postgres_changes',
+                const channel = supabase
+                    .channel('realtime-profiles')
+                    .on(
+                        'postgres_changes',
                         {
-                            event: '*',
-                            schema: 'public',
-                            table: 'profiles'
+                            event: 'UPDATE',          // Only listen for updates
+                            schema: 'public',         // Default schema
+                            table: 'profiles',        // The table you just flipped the switch on
+                            filter: `id=eq.${session.user.id}` // 🚨 CRITICAL: Only watch THIS user's row!
                         },
                         (payload) => {
-                            setStarsCount(payload.new.star_count)
+                            console.log("🔥 Postgres Camera saw a change!", payload.new);
+                            // payload.new contains the raw database row exactly as it looks in Supabase
+                            setStarsCount(payload.new.star_count);
                         }
                     )
-                    .subscribe()
-                //unsub from channel
+                    .subscribe();
 
             } catch (error) {
-                //alert("error loading basic statisctics data:", error)
+                alert("error loading  statistics data:" + error.message)
             }
 
         }
+
         fetchStatsData()
     }, [session])
 
