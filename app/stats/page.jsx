@@ -14,11 +14,12 @@ export default async function StatsPage() {
     }
 
     console.log(session.user)
-    const [listResult, settingsResult] = await Promise.all(
+    const [listResult, settingsResult, taskResult] = await Promise.all(
         [
             // supabase.from("profiles").select("*").eq("id", session.user.id).single(),
             supabase.from("todo_lists").select("*").eq("owner_id", session.user.id).order("created_at", { ascending: true }),
-            supabase.from("user_settings").select("*").eq("user_id", session.user.id)
+            supabase.from("user_settings").select("*").eq("user_id", session.user.id),
+            supabase.from("todo_tasks").select("*").eq("owner_id", session.user.id)
         ]
     )
 
@@ -29,6 +30,6 @@ export default async function StatsPage() {
     console.log(listResult)
     console.log(settingsResult)
     return (
-        <StatsBoard initialList={listResult} initialSettings={settingsResult} />
+        <StatsBoard initialList={listResult} initialSettings={settingsResult} initialTasks={taskResult} />
     )
 }

@@ -8,20 +8,23 @@ import { useSession } from "next-auth/react"
 import profilePic from "../src/profilepic.png"
 import createBrowserClient from "../../scripts/createBrowserClient"
 import React, { useEffect } from "react"
-import { redirect } from 'next/navigation';
+import { useRouter } from "next/navigation"
 
 export default function Header(props) {
     const { data: session } = useSession()
     const supabase = createBrowserClient();
+    const router = useRouter();
 
     const [starsCount, setStarsCount] = React.useState(0)
 
     function HandleProfileClick() {
-        window.location.replace("/stats");
+        router.push("/stats")
     }
 
     useEffect(() => {
+        let myChannel;
         async function fetchStatsData() {
+
             //checking user
             if (!session?.user?.id || !session?.supabaseAccessToken) {
                 return
@@ -35,31 +38,35 @@ export default function Header(props) {
 
                 setStarsCount(data[0]?.star_count)
 
-                const channel = supabase
+                myChannel = supabase
                     .channel('realtime-profiles')
                     .on(
                         'postgres_changes',
                         {
-                            event: 'UPDATE',          // Only listen for updates
-                            schema: 'public',         // Default schema
-                            table: 'profiles',        // The table you just flipped the switch on
-                            filter: `id=eq.${session.user.id}` // 🚨 CRITICAL: Only watch THIS user's row!
+                            event: 'UPDATE',
+                            schema: 'public',
+                            table: 'profiles',
+                            filter: `id=eq.${session.user.id}`
                         },
                         (payload) => {
-                            console.log("🔥 Postgres Camera saw a change!", payload.new);
-                            // payload.new contains the raw database row exactly as it looks in Supabase
                             setStarsCount(payload.new.star_count);
                         }
                     )
                     .subscribe();
 
             } catch (error) {
-                alert("error loading  statistics data:" + error.message)
+                alert("error loading header data:" + error.message)
             }
 
         }
 
+
         fetchStatsData()
+        return () => {
+            if (myChannel) {
+                supabase.removeChannel(myChannel)
+            }
+        }
     }, [session])
 
     if (session) {
@@ -67,25 +74,25 @@ export default function Header(props) {
             <header className="select-none w-[100%] ml-auto mr-auto bg-[#9D9695] text-4xl p-2" style={{ borderTop: "solid black 5px", borderBottom: "solid black 5px" }}>
                 <div className="flex flex flex-row items-center">
 
-                    <div onClick={HandleProfileClick} className="flex items-center transition-transform duration-300 hover:scale-105 cursor-pointer">
+                    <div onClick={HandleProfileClick} className="flex items-center">
 
-                        <div className="w-14 h-14 rounded-full overflow-hidden border border-gray-200 hover:border-[#ffffff]">
+                        <div className="transition-transform duration-300 hover:scale-105 cursor-pointer w-14 h-14 rounded-full overflow-hidden border border-gray-200 hover:border-[#ffffff]">
                             <Image src={profilePic} width={70} height={70} alt="ProfilePic" loading="eager" />
                         </div>
-                        <p className="font-logo text-5xl pl-2">{session.user.username}</p>
+                        <p className="transition-transform duration-300 hover:scale-105 cursor-pointer font-logo text-5xl pl-2">{session.user.username}</p>
 
                     </div>
 
                     <div className="flex gap-17 ml-15">
                         <StarsCounter starsCount={starsCount} />
-                        <StreakCounter streakCount={50} />
+                        <StreakCounter streakCount={0} />
                     </div>
 
-                    <p onClick={() => redirect("/")} className="font-logo text-5xl ml-[20%] transition-transform duration-300 hover:scale-102 cursor-pointer hover:border-white"><u className="decoration-[#D0FFCE] decoration-auto underline-offset-[10px]">ItsDone✔️</u></p>
+                    <p onClick={() => router.push("/home")} className="font-logo text-5xl ml-[20%] transition-transform duration-300 hover:scale-102 cursor-pointer hover:border-white"><u className="decoration-[#D0FFCE] decoration-auto underline-offset-[10px]">ItsDone✔️</u></p>
 
                     <MoreMenu />
                 </div>
-            </header>
+            </header >
         )
     }
     else {

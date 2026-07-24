@@ -1,7 +1,7 @@
 import Image from "next/image";
 import fireIcon from "./src/fire.png";
 
-export default function StarsCounter(props) {
+export default function StreakCounter(props) {
 
     return (
         <div className="flex flex-row justify-center items-center group cursor-default">
@@ -10,6 +10,7 @@ export default function StarsCounter(props) {
                 <Image src={fireIcon} width={50} height={50} alt="Streak" loading="eager" />
             </div>
             <p className="text-5xl ml-2 font-bold">{props.streakCount}</p>
+
         </div>
     )
 }

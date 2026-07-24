@@ -32,30 +32,11 @@ export default function MainDashboard({ initialLists, session }) {
         return newestDbTime > newestCacheTime;
     }
 
-    //list caching
-    /*
-    const cachedLists = localStorage.getItem("my_cached_lists")
-    if (cachedLists) {
-        setLists(JSON.parse(cachedLists))
-        setIsLoading(false)
-    }
-
-    //check browsers cache vs fetched lists and invoke 'updating data' popup
-    if (lists && needsUpdate(cachedLists, lists)) {
-        setIsUpdatingData(true)
-        setTimeout(() => {
-            setIsUpdatingData(false)
-        }, 1500)
-
-        setLists(lists)
-        localStorage.setItem("my_cached_lists", JSON.stringify(lists))
-    }
-        */
-
     if (lists) {
         itemsMap = lists.map((item) => (
             <ListElement setIsUpdatingData={setIsUpdatingData}
-                key={item.id} ownerId={item.owner_id} listId={item.id} userId={session?.user.id}
+                key={item.id} setLists={setLists}
+                ownerId={item.owner_id} listId={item.id} userId={session?.user.id}
                 title={item.title} donePercentage={item.done_percentage} isDone={item.is_done} todoItems={item.todo_tasks}
             />
         ))

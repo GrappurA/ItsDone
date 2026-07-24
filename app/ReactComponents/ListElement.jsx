@@ -6,7 +6,8 @@ import unfilledStar from "./src/unfilledStarIcon.png"
 
 import { useEffect, useState } from "react"
 import createBrowserClient from "../../scripts/createBrowserClient"
-import { i } from "motion/react-client"
+import UseAnimations from "react-useanimations"
+import trash from 'react-useanimations/lib/trash'
 
 export default function ListElement(props) {
 
@@ -108,6 +109,30 @@ export default function ListElement(props) {
         finally {
             props.setIsUpdatingData(false)
         }
+    }
+
+    //delete list
+    async function handleDeleteList(listId) {
+        if (!listId) return
+        props.setIsUpdatingData(true)
+
+        //optimistic ui update
+        props.setLists(prev => prev.filter(l => l.id !== listId))
+
+        try {
+            const { error } = await supabase
+                .from('todo_lists')
+                .delete()
+                .eq('id', listId)
+            if (error)
+                throw new Error('Error deleting list')
+        } catch (err) {
+            alert(err)
+        }
+        finally {
+            props.setIsUpdatingData(false)
+        }
+
     }
 
     //delete task
@@ -223,7 +248,22 @@ export default function ListElement(props) {
 
                         {/* HEADER */}
                         <div className="bg-[#cefffd] border-b-4 border-black p-6 relative z-20 flex justify-between items-center shrink-0">
-                            <h2 className="text-5xl font-extrabold m-0 truncate pr-4">{props.title}</h2>
+
+                            <section className="flex items-center justify-center">
+                                <h2 className="text-5xl font-extrabold m-0 truncate pr-4">{props.title}</h2>
+                                <button
+                                    onClick={() => { handleDeleteList(props.listId) }}
+                                    className="flex items-center justify-center w-14 h-14 bg-[#ff4a4a] border-4 border-black rounded-xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 active:shadow-none transition-all"
+                                >
+                                    <UseAnimations
+                                        animation={trash}
+                                        size={32}
+                                        strokeColor="black" // Ensures it matches your thick black borders
+                                        wrapperStyle={{ padding: 0 }} // Removes any weird default margins
+                                    />
+                                </button>
+                            </section>
+
 
                             <section className="flex items-stretch border-4 border-black rounded-xl overflow-hidden w-[240px] h-[60px] shrink-0 bg-white shadow-md">
                                 <div className="bg-[#C3EDAB] flex items-center justify-center border-r-4 border-black px-4 w-1/2">

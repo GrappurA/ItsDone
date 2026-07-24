@@ -21,7 +21,6 @@ export default async function HomePage() {
     .eq("owner_id", session.user.id)
     .order("created_at", { ascending: false })
 
-  console.log(initialLists)
   if (error) {
     return (<p className="text-3xl">Error loading your lists</p>)
   }
