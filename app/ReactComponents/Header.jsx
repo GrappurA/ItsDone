@@ -50,6 +50,7 @@ export default function Header(props) {
                         },
                         (payload) => {
                             setStarsCount(payload.new.star_count);
+                            alert(user.id)
                         }
                     )
                     .subscribe();
