@@ -4,14 +4,19 @@ import Link from "next/link";
 import { nerkoOne } from '../fonts/NerkoOne';
 
 import { signIn } from "next-auth/react";
+import { useState } from "react";
 
 export default function LoginPage() {
+
+    const [email, setEmail] = useState("")
+    const [password, setPassword] = useState("")
+
+    const isColor = email.length > 0 && password.length > 0;
 
     async function HandleLogin(e) {
         e.preventDefault()
 
-        const email = e.target.email.value;
-        const password = e.target.password.value;
+
         const result = await signIn("credentials", {
             email: email,
             password: password,
@@ -37,6 +42,8 @@ export default function LoginPage() {
                 className="flex flex-col w-[400px] max-w-[90vw] p-8 text-3xl gap-5 border-black rounded-3xl border-4 bg-[#fffdce] shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]"
             >
                 <input
+                    onChange={(e) => { setEmail(e.target.value) }}
+
                     type="email"
                     name="email"
                     id="email"
@@ -46,6 +53,8 @@ export default function LoginPage() {
                 />
 
                 <input
+                    onChange={(e) => { setPassword(e.target.value) }}
+
                     type="password"
                     name="password"
                     id="password"
@@ -57,7 +66,7 @@ export default function LoginPage() {
                 {/* The Button: Matches your header gray, with the push-down click animation */}
                 <button
                     type="submit"
-                    className="mt-2 p-3 bg-[#9D9695] text-white rounded-xl border-4 border-black hover:bg-gray-600 transition-all active:translate-y-1 active:translate-x-1 active:shadow-none shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
+                    className={`mt-2 p-3 ${isColor ? 'bg-[#d0ffce] text-black' : 'bg-[#9D9695] text-white'} rounded-xl border-4 border-black hover:bg-gray-600 transition-all active:translate-y-1 active:translate-x-1 active:shadow-none shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]`}
                 >
                     Log In
                 </button>

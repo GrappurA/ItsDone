@@ -15,12 +15,18 @@ export default function RegisterPage() {
 
     const [error, setError] = React.useState("")
 
+    const [email, setEmail] = React.useState("")
+    const [username, setUsername] = React.useState("")
+    const [password, setPassword] = React.useState("")
+
+    const isColor = email.length > 0 && username.length > 0 && password.length > 0;
+
     async function HandleSubmit(e) {
         e.preventDefault();
 
-        const email = e.target.email.value;
-        const username = e.target.username.value;
-        const password = e.target.password.value;
+        //const email = e.target.email.value;
+        //const username = e.target.username.value;
+        //const password = e.target.password.value;
 
         const { data, error } = await supabase.auth.signUp({
             email,
@@ -56,6 +62,7 @@ export default function RegisterPage() {
             className="flex flex-col w-[400px] max-w-[90vw] p-8 text-3xl gap-5 border-black rounded-3xl border-4 bg-[#fffdce] shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]"
         >
             <input
+                onChange={(e) => { setEmail(e.target.value) }}
                 type="email"
                 name="email"
                 id="email"
@@ -65,6 +72,7 @@ export default function RegisterPage() {
             />
 
             <input
+                onChange={(e) => { setUsername(e.target.value) }}
                 type="text"
                 name="username"
                 id="username"
@@ -74,6 +82,7 @@ export default function RegisterPage() {
             />
 
             <input
+                onChange={(e) => { setPassword(e.target.value) }}
                 type="password"
                 name="password"
                 id="password"
@@ -85,7 +94,7 @@ export default function RegisterPage() {
             {/* The Button: Matches your header gray, with a click animation */}
             <button
                 type="submit"
-                className="mt-2 p-3 bg-[#9D9695] text-white rounded-xl border-4 border-black hover:bg-gray-600 transition-all active:translate-y-1 active:translate-x-1 active:shadow-none shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
+                className={`mt-2 p-3 ${isColor ? 'bg-[#d0ffce] text-black' : 'bg-[#9D9695] text-white'} rounded-xl border-4 border-black hover:bg-gray-600 transition-all active:translate-y-1 active:translate-x-1 active:shadow-none shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]`}
             >
                 Sign Up
             </button>
