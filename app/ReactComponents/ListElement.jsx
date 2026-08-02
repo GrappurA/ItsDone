@@ -103,7 +103,7 @@ export default function ListElement(props) {
                 .update({ "status": newStatus })
                 .eq("id", itemId)
         } catch (err) {
-            alert("failed to update your data" + error.message)
+            alert("failed to update your data" + err.message)
             props.setIsUpdatingData(false)
         }
         finally {
@@ -165,18 +165,20 @@ export default function ListElement(props) {
             return (
                 <div
                     key={index}
-                    className={`flex justify-between items-center p-5 mb-4 border-4 border-black rounded-2xl transition-all duration-300 
+                    // 🚨 RESPONSIVE FIX: gap-2 on mobile, smaller padding, adjusted text sizes
+                    className={`flex justify-between items-center gap-2 md:gap-4 p-3 md:p-5 mb-4 border-4 border-black rounded-2xl transition-all duration-300 
                         shadow-[7px_7px_0px_0px_rgba(0,0,0,1)] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]
-                          ${isDone ? "bg-gray-100 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] translate-y-[2px]" // Pushed-down, "completed" look
-                            : "bg-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1" // Active, popping look
+                          ${isDone ? "bg-gray-100 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] translate-y-[2px]"
+                            : "bg-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1"
                         }`}>
 
                     <button
                         onClick={() => handleDeleteTask(item.id)}
                         title="Delete Task"
+                        // Shrinking button for mobile
                         className="
-        flex items-center justify-center w-12 h-12 shrink-0
-        bg-[#ff4a4a] text-black text-2xl font-black leading-none
+        flex items-center justify-center w-10 h-10 md:w-12 md:h-12 shrink-0
+        bg-[#ff4a4a] text-black text-xl md:text-2xl font-black leading-none
         border-4 border-black rounded-xl 
         shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] 
         transition-all cursor-pointer
@@ -187,18 +189,19 @@ export default function ListElement(props) {
                         X
                     </button>
 
-                    <p className={`text-3xl font-bold truncate pr-4 max-w-[70%] transition-all duration-300 ${isDone ? "line-through text-gray-400 decoration-4 decoration-black" : "text-black"
+                    {/* 🚨 RESPONSIVE FIX: flex-1 takes up remaining space instead of hard max-width */}
+                    <p className={`text-xl md:text-3xl font-bold truncate pr-2 flex-1 transition-all duration-300 ${isDone ? "line-through text-gray-400 decoration-4 decoration-black" : "text-black"
                         }`}>
                         {item.title}
                     </p>
 
-                    {/* Status Badge (Now a clickable button!) */}
                     <button
                         onClick={() => handleToggleTask(item.id)}
-                        className={`shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]
-                            px-4 py-2 border-4 border-black rounded-xl font-black text-xl cursor-pointer transition-all active:translate-y-[4px] active:translate-x-[4px]  active:shadow-none ${isDone
-                                ? "bg-[#D0FFCE] shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]" // Green for done
-                                : "bg-[#fffdce] shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:bg-[#fff770] " // Yellow for pending
+                        // Shrinking button and text for mobile
+                        className={`shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] shrink-0
+                            px-2 py-2 md:px-4 md:py-2 border-4 border-black rounded-xl font-black text-sm md:text-xl cursor-pointer transition-all active:translate-y-[4px] active:translate-x-[4px] active:shadow-none ${isDone
+                                ? "bg-[#D0FFCE] shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
+                                : "bg-[#fffdce] shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:bg-[#fff770] "
                             }`}>
                         {isDone ? "Done ✔" : "Pending"}
                     </button>
@@ -208,93 +211,96 @@ export default function ListElement(props) {
         )
     }
 
-    // closed item
     return (
         <>
-            <li onClick={() => setIsOpen(true)} className='m-2 rounded-2xl border-3 bg-white transition-all duration-300 ease-in-out hover:-translate-y-1 hover:shadow-xl cursor-pointer relative overflow-hidden group'>
+            {/* CLOSED CARD STATE */}
+            <li onClick={() => setIsOpen(true)} className='m-2 w-full max-w-[300px] rounded-2xl border-3 bg-white transition-all duration-300 ease-in-out hover:-translate-y-1 hover:shadow-xl cursor-pointer relative overflow-hidden group'>
                 <div className="absolute top-0 -left-[100%] w-[60%] h-full bg-gradient-to-r from-transparent via-black/[0.06] to-transparent skew-x-[-25deg] group-hover:left-[200%] transition-all duration-700 ease-in-out pointer-events-none z-10"></div>
-                <p className="text-center text-4xl relative z-20 bg-[#cefffd]">{props.title}</p>
 
-                <section className="flex items-stretch border-y-2 border-black w-[200px]">
-                    <div className="bg-[#C3EDAB] flex items-center justify-center border-r-2 border-black px-2 py-1">
+                <p className="text-center text-3xl md:text-4xl relative z-20 bg-[#cefffd] truncate px-2">{props.title}</p>
+
+                {/* 🚨 RESPONSIVE FIX: w-full instead of w-[200px] so it matches the card body */}
+                <section className="flex items-stretch border-y-2 border-black w-full">
+                    <div className="bg-[#C3EDAB] flex items-center justify-center border-r-2 border-black px-4 py-1 w-1/3">
                         <p className="font-bold text-3xl leading-none m-0">{donePercentage}%</p>
                     </div>
+                    <div className="bg-[#F2D7EE] w-2/3">
 
-                    <div className="bg-[#F2D7EE] w-full">
-                        <div className="flex flex-1 items-center justify-center py-1 transition-transform duration-300 hover:rotate-70">
-                            <Image src={donePercentage > donePercentageThreshhold ? filledStar : unfilledStar} width={36} height={36} alt="unfilled star" loading="eager" />
+                        <div className="w-full flex items-center justify-center py-2 transition-transform duration-300 hover:rotate-12">
+                            <Image src={donePercentage > donePercentageThreshhold ? filledStar : unfilledStar} width={36} height={36} alt="star" loading="eager" />
                         </div>
                     </div>
                 </section>
 
-                {/* items of the list */}
                 <ul className="p-1">
-                    <p className="text-[24px] text-center">contains: <u>{listItemsMap.length}</u> items</p>
+                    <p className="text-[20px] md:text-[24px] text-center">contains: <u>{itemsList.length}</u> items</p>
                 </ul>
             </li>
 
-            {/*opened item*/}
+            {/* OPEN MODAL STATE */}
             {isOpen &&
                 <div
-                    className="fixed inset-0 z-30 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4"
+                    className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-2 md:p-4"
                     onClick={() => setIsOpen(false)}>
-                    {/* 3. THE MODAL CONTENT: Stop click events from bubbling up to the overlay */}
+
+                    {/* 🚨 RESPONSIVE FIX: max-w-[800px] and max-h-[95vh] prevents overflow on phones */}
                     <div
-                        className='w-[800px] max-h-[90vh] flex flex-col rounded-3xl border-4 border-black bg-white shadow-2xl relative overflow-hidden group'
+                        className='w-full max-w-[800px] max-h-[95dvh] flex flex-col rounded-3xl border-4 border-black bg-white shadow-2xl relative overflow-hidden group'
                         onClick={(e) => e.stopPropagation()}>
 
-                        {/* Shading Animation */}
                         <div className="absolute top-0 -left-[100%] w-[60%] h-full bg-gradient-to-r from-transparent via-black/[0.06] to-transparent skew-x-[-25deg] hover:left-[200%] transition-all duration-700 ease-in-out pointer-events-none z-10"></div>
 
-                        {/* HEADER */}
-                        <div className="bg-[#cefffd] border-b-4 border-black p-6 relative z-20 flex justify-between items-center shrink-0">
+                        {/* MODAL HEADER */}
+                        {/* 🚨 RESPONSIVE FIX: flex-col on mobile, flex-row on desktop */}
+                        <div className="bg-[#cefffd] border-b-4 border-black p-4 md:p-6 relative z-20 flex flex-col md:flex-row gap-4 justify-between items-center shrink-0">
 
-                            <section className="flex items-center justify-center">
-                                <h2 className="text-5xl font-extrabold m-0 truncate pr-4">{props.title}</h2>
+                            <section className="flex items-center justify-between w-full md:w-auto">
+                                <h2 className="text-3xl md:text-5xl font-extrabold m-0 truncate pr-4 flex-1">{props.title}</h2>
                                 <button
                                     onClick={() => { handleDeleteList(props.listId) }}
-                                    className="flex items-center justify-center w-14 h-14 bg-[#ff4a4a] border-4 border-black rounded-xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 active:shadow-none transition-all"
+                                    className="flex items-center justify-center shrink-0 w-12 h-12 md:w-14 md:h-14 bg-[#ff4a4a] border-4 border-black rounded-xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 active:shadow-none transition-all"
                                 >
                                     <UseAnimations
                                         animation={trash}
-                                        size={32}
-                                        strokeColor="black" // Ensures it matches your thick black borders
-                                        wrapperStyle={{ padding: 0 }} // Removes any weird default margins
+                                        size={28}
+                                        strokeColor="black"
+                                        wrapperStyle={{ padding: 0 }}
                                     />
                                 </button>
                             </section>
 
-
-                            <section className="flex items-stretch border-4 border-black rounded-xl overflow-hidden w-[240px] h-[60px] shrink-0 bg-white shadow-md">
+                            {/* 🚨 RESPONSIVE FIX: w-full on mobile, w-[240px] on desktop */}
+                            <section className="flex items-stretch border-4 border-black rounded-xl overflow-hidden w-full md:w-[240px] h-14 md:h-[60px] shrink-0 bg-white shadow-md">
                                 <div className="bg-[#C3EDAB] flex items-center justify-center border-r-4 border-black px-4 w-1/2">
-                                    <p className="font-bold text-4xl leading-none m-0">{donePercentage}%</p>
+                                    <p className="font-bold text-3xl md:text-4xl leading-none m-0">{donePercentage}%</p>
                                 </div>
                                 <div className="bg-[#F2D7EE] flex items-center justify-center w-1/2">
                                     <div className="transition-transform duration-300 hover:rotate-12 hover:scale-110">
-                                        <Image src={donePercentage > donePercentageThreshhold ? filledStar : unfilledStar} width={42} height={42} alt="star" loading="eager" />
+                                        <Image src={donePercentage > donePercentageThreshhold ? filledStar : unfilledStar} width={36} height={36} alt="star" loading="eager" />
                                     </div>
                                 </div>
                             </section>
                         </div>
 
-                        {/* BODY (Scrollable if list is too long) */}
-                        <div className="shrink-0 p-8 bg-white relative z-20">
+                        {/* MODAL BODY (Add Task Form) */}
+                        <div className="shrink-0 p-4 md:p-8 bg-white relative z-20">
                             <form action={handleAddNewTaskClick}>
-                                <div className="flex gap-1">
+                                <div className="flex gap-2">
 
                                     <input
                                         type="text"
                                         name="todoTaskTitle"
                                         placeholder="What needs to be done?"
-                                        className="w-full border-4 border-black rounded-xl p-3 mr-4 text-2xl outline-none shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] focus:shadow-[0px_0px_0px_0px_rgba(0,0,0,1)] hover:shadow-[0px_0px_0px_0px_rgba(0,0,0,1)] transition-all bg-white placeholder:text-gray-400"
+                                        className="w-full border-4 border-black rounded-xl p-2 md:p-3 text-lg md:text-2xl outline-none shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] focus:shadow-[0px_0px_0px_0px_rgba(0,0,0,1)] hover:shadow-[0px_0px_0px_0px_rgba(0,0,0,1)] transition-all bg-white placeholder:text-gray-400"
                                         required
                                     />
 
+                                    {/* 🚨 RESPONSIVE FIX: fixed standard tailwind sizing w-12/w-16 */}
                                     <input
                                         type="checkbox"
                                         name="todoTaskStatus"
                                         className="
-                                    appearance-none w-17 h-17 min-w-[2.5rem] 
+                                    shrink-0 appearance-none w-12 h-12 md:w-16 md:h-16 
                                     border-4 border-black rounded-xl bg-white 
                                     shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] 
                                     hover:shadow-[0px_0px_0px_0px_rgba(0,0,0,1)]
@@ -304,18 +310,18 @@ export default function ListElement(props) {
                                     after:content-[''] checked:after:content-['✔'] 
                                     after:absolute after:left-1/2 after:top-1/2 
                                     after:-translate-x-1/2 after:-translate-y-1/2 
-                                    after:text-3xl after:text-black after:font-black"
+                                    after:text-2xl md:text-3xl after:text-black after:font-black"
                                     />
                                 </div>
 
-                                <button type="submit" className="mt-2 w-full py-4 text-3xl font-bold border-4 border-black border-dashed rounded-2xl text-gray-400 hover:bg-[#cefffd] hover:text-black hover:border-solid hover:shadow-lg transition-all duration-300">
+                                <button type="submit" className="mt-4 w-full py-2 md:py-4 text-xl md:text-3xl font-bold border-4 border-black border-dashed rounded-2xl text-gray-400 hover:bg-[#cefffd] hover:text-black hover:border-solid hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all duration-300">
                                     + Add New Task
                                 </button>
                             </form>
                         </div>
 
-                        {/* FOOTER */}
-                        <div className="p-6 border-t-4 border-black bg-gray-50 relative z-20 flex-1 overflow-y-auto">
+                        {/* MODAL FOOTER (List Items) */}
+                        <div className="p-2 md:p-6 border-t-4 border-black bg-gray-50 relative z-20 flex-1 overflow-y-auto">
                             {listItemsMap}
                         </div>
 

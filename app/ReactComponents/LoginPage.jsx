@@ -16,7 +16,6 @@ export default function LoginPage() {
     async function HandleLogin(e) {
         e.preventDefault()
 
-
         const result = await signIn("credentials", {
             email: email,
             password: password,
@@ -29,7 +28,6 @@ export default function LoginPage() {
             return;
         }
 
-        //window.location.reload();
     }
 
 

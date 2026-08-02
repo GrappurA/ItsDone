@@ -43,17 +43,25 @@ export default function MainDashboard({ initialLists, session }) {
     }
 
     return (
-        <div className={`bg-[#D0FFCE] p-1 ${nerkoOne.className} select-none h-[72.9vh]`}>
+        // Changed to flex-col and items-center so the 700px container stays centered on desktop
+        <div className={`bg-[#D0FFCE] p-2 md:p-4 ${nerkoOne.className} select-none min-h-[72.9vh] flex flex-col items-center`}>
+
             {isUpdatingData &&
                 <UpdatingPopUp setIsUpdatingData={setIsUpdatingData} />
             }
-            <ListAddingForm setLists={setLists} userLists={lists} userId={session?.user.id} session={session} />
 
-            <div id="CanvasForTasks" className="text-3xl border-black-200 rounded-xl border-4 w-[700px] mt-1 overflow-hidden">
-                <p className="p-1 text-4xl bg-[#fffdce]">Your Lists</p>
-                <hr className="w-[100%] " />
+            {/* Wrapped the form in the same max-width as the canvas so they align perfectly */}
+            <div className="w-full max-w-[700px]">
+                <ListAddingForm setLists={setLists} userLists={lists} userId={session?.user.id} session={session} />
+            </div>
 
-                <ul className='grid grid-cols-3 gap-1 justify-items-center'>
+            {/* 🚨 THE WIDTH FIX: w-[700px] becomes w-full max-w-[700px] */}
+            <div id="CanvasForTasks" className="text-3xl border-black rounded-xl border-4 w-full max-w-[700px] mt-4 overflow-hidden bg-white shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
+
+                <p className="p-3 text-4xl bg-[#fffdce] border-b-4 border-black">Your Lists</p>
+
+                {/* 🚨 THE GRID FIX: 1 col on mobile, 2 on tablet, 3 on desktop. Added padding and gap-4. */}
+                <ul className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 p-4 justify-items-center'>
                     {itemsMap}
                 </ul>
 
