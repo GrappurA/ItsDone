@@ -31,12 +31,21 @@ export default function RootLayout({
       className={`${alfaSlab.variable} h-full antialiased`}
     >
       <AuthProvider>
-        <body className="min-h-full ">
-          <Header />
+        <body className="flex flex-col h-[100dvh]">
 
-          {children}
+          <div className="shrink-0">
+            <Header />
+          </div>
 
-          <Footer />
+          <div className="flex-1">
+            {children}
+          </div>
+
+
+          <div className="shrink-0">
+            <Footer />
+          </div>
+
         </body>
       </AuthProvider>
     </html >

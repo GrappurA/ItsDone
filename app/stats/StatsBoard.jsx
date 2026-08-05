@@ -45,86 +45,94 @@ export default function StatsBoard({ initialList, initialSettings, initialTasks 
 
 
     return (
-        <div className={`bg-[#d0ffce] p-2 ${nerkoOne.className} h-[72.9vh] select-none`} >
-            <p className="text-[62px] bg-[#fffdce] w-fit border-4 rounded-2xl mb-3 pl-2 pr-2">Your Stats</p>
+        // 1. RESPONSIVE FIX: Changed `h-` to `min-h-` so it stretches on mobile if content stacks, added md:p-6 for better desktop spacing
+        <div className={`bg-[#d0ffce] p-2 md:p-6 ${nerkoOne.className} min-h-[72.9vh] select-none`} >
 
-            <div className="grid grid-cols-2 gap-6">
+            {/* Shrink the massive title on mobile */}
+            <p className="text-4xl md:text-[62px] bg-[#fffdce] w-fit border-4 border-black rounded-2xl mb-4 md:mb-6 px-4 py-1">
+                Your Stats
+            </p>
 
-                <div className="grid grid-cols-1 sm:grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* 2. THE OUTER GRID FIX: 1 column on mobile, 2 columns on extra-large (xl) screens */}
+            <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 items-start">
+
+                {/* THE CARDS GRID FIX: 1 col on small phones, 2 cols on tablets/desktops */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
                     {/* Card 1: Total Tasks (Blue) */}
-                    <div id="1" onClick={(e) => setCardOpenId(e.currentTarget.id)} className="bg-[#cefffd] border-4 border-black rounded-2xl p-6 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-2 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all duration-200">
-                        <p className="text-2xl font-bold text-gray-800 border-b-4 border-black pb-2 mb-4">
+                    <div id="1" onClick={(e) => setCardOpenId(e.currentTarget.id)} className="bg-[#cefffd] border-4 border-black rounded-2xl p-4 md:p-6 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-2 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all duration-200 cursor-pointer">
+                        <p className="text-xl md:text-2xl font-bold text-gray-800 border-b-4 border-black pb-2 mb-4">
                             ✅Task Info
                         </p>
-                        <p className="text-5xl font-black text-black">
+                        <p className="text-4xl md:text-5xl font-black text-black">
                             Tasks
                         </p>
                     </div>
 
                     {/* Card 2: Completed (Green) */}
                     <div id="2" onClick={(e) => { setCardOpenId(e.currentTarget?.id) }}
-                        className="bg-[#D0FFCE] border-4 border-black rounded-2xl p-6 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-2 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all duration-200">
-                        <p className="text-2xl font-bold text-gray-800 border-b-4 border-black pb-2 mb-4">
+                        className="bg-[#D0FFCE] border-4 border-black rounded-2xl p-4 md:p-6 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-2 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all duration-200 cursor-pointer">
+                        <p className="text-xl md:text-2xl font-bold text-gray-800 border-b-4 border-black pb-2 mb-4">
                             📝List Info
                         </p>
-                        <p className="text-5xl font-black text-black">
+                        <p className="text-4xl md:text-5xl font-black text-black">
                             Lists
                         </p>
                     </div>
 
                     {/* Card 3: Biggest Streak (Pink) */}
                     <div id="3" onClick={(e) => { setCardOpenId(e.currentTarget?.id) }}
-                        className="bg-[#F2D7EE] border-4 border-black rounded-2xl p-6 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-2 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all duration-200">
-                        <p className="text-2xl font-bold text-gray-800 border-b-4 border-black pb-2 mb-4">
+                        className="bg-[#F2D7EE] border-4 border-black rounded-2xl p-4 md:p-6 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-2 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all duration-200 cursor-pointer">
+                        <p className="text-xl md:text-2xl font-bold text-gray-800 border-b-4 border-black pb-2 mb-4">
                             🔥Streaks
                         </p>
-                        <p className="text-5xl font-black text-black">
+                        <p className="text-4xl md:text-5xl font-black text-black">
                             Streak
                         </p>
                     </div>
 
                     {/* Card 4: Average Done (Yellow) */}
                     <div id="4" onClick={(e) => { setCardOpenId(e.currentTarget?.id) }}
-                        className="bg-[#fffdce] border-4 border-black rounded-2xl p-6 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-2 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all duration-200">
-                        <p className="text-2xl font-bold text-gray-800 border-b-4 border-black pb-2 mb-4">
+                        className="bg-[#fffdce] border-4 border-black rounded-2xl p-4 md:p-6 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-2 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all duration-200 cursor-pointer">
+                        <p className="text-xl md:text-2xl font-bold text-gray-800 border-b-4 border-black pb-2 mb-4">
                             📊Avg Completion
                         </p>
-                        <p className="text-5xl font-black text-black">
+                        <p className="text-4xl md:text-5xl font-black text-black">
                             done here {cardOpenId}
                         </p>
                     </div>
                 </div>
 
-                <div className="w-fit">
+                {/* CHART WRAPPER: Removed w-fit so it respects mobile screen width. Added overflow-x-auto in case the chart canvas is wider than the phone. */}
+                <div className="w-full max-w-full overflow-x-auto pb-4">
                     {<StarProgressChart doneThreshold={doneThreshold} data={initialList.data} />}
                 </div>
 
             </div>
 
             {cardOpenId &&
-                <div className="fixed inset-0 z-30 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4"
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-2 md:p-4"
                     onClick={() => setCardOpenId(null)}
                 >
                     <div
-                        className={`w-[900px] min-h-[400px] border-4 border-black rounded-3xl p-4 shadow-2xl relative ${modalContent[cardOpenId].color}`}
-                        // 2. CRITICAL: This stops the modal from closing when you click the inside of the card!
+                        // 3. THE MODAL FIX: w-full max-w-[900px] ensures it fits on phones but caps on desktop. max-h-[90dvh] + overflow-y-auto ensures scrollability if text is too long!
+                        className={`w-full max-w-[900px] min-h-[300px] md:min-h-[400px] max-h-[90dvh] overflow-y-auto border-4 border-black rounded-3xl p-4 md:p-8 shadow-2xl relative ${modalContent[cardOpenId].color}`}
                         onClick={(e) => e.stopPropagation()}
                     >
 
-                        {/* 3. Render the Title */}
-                        <h2 className="text-6xl font-black border-b-7 border-black pb-4 mb-6">
+                        {/* Title scales down for mobile */}
+                        <h2 className="text-4xl md:text-6xl font-black border-b-4 md:border-b-7 border-black pb-4 mb-4 md:mb-6 pr-12">
                             {modalContent[cardOpenId].title}
                         </h2>
 
-                        {/* 4. Render the Details */}
-                        <div className="text-3xl">
+                        {/* Details text scales down slightly for readability on phones */}
+                        <div className="text-xl md:text-3xl">
                             {modalContent[cardOpenId].details}
                         </div>
 
-                        {/* Optional: A close button so the user doesn't HAVE to click the background */}
+                        {/* Adjusted positioning and size for the close button on mobile */}
                         <button
                             onClick={() => setCardOpenId(null)}
-                            className="absolute top-4 right-4 w-12 h-12 bg-[#ff4a4a] text-black text-2xl font-black border-4 border-black rounded-xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 hover:shadow-[0px_0px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 active:shadow-none transition-all"
+                            className="absolute top-4 right-4 md:top-6 md:right-6 w-10 h-10 md:w-12 md:h-12 flex items-center justify-center bg-[#ff4a4a] text-black text-xl md:text-2xl font-black border-4 border-black rounded-xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 hover:shadow-[0px_0px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 active:shadow-none transition-all"
                         >
                             X
                         </button>
@@ -134,6 +142,6 @@ export default function StatsBoard({ initialList, initialSettings, initialTasks 
             }
 
         </div >
-
     )
+
 }

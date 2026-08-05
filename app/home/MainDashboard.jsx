@@ -44,7 +44,7 @@ export default function MainDashboard({ initialLists, session }) {
 
     return (
         // Changed to flex-col and items-center so the 700px container stays centered on desktop
-        <div className={`bg-[#D0FFCE] p-2 md:p-4 ${nerkoOne.className} select-none min-h-[72.9vh] flex flex-col items-center`}>
+        <div className={` h-full bg-[#D0FFCE] p-2 md:p-4 ${nerkoOne.className} select-none flex flex-col items-center`}>
 
             {isUpdatingData &&
                 <UpdatingPopUp setIsUpdatingData={setIsUpdatingData} />
