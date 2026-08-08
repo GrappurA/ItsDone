@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react";
+import { useSearchParams } from "next/navigation";
 
 import UpdatingPopUp from "../ReactComponents/UpdatingPopUp"
 import ListAddingForm from "../ReactComponents/ListAddingForm"
@@ -13,28 +14,18 @@ export default function MainDashboard({ initialLists, session }) {
     const [isLoading, setIsLoading] = useState(false)
     const [isUpdatingData, setIsUpdatingData] = useState(false)
 
+    const searchParams = useSearchParams()
+    const listIdReference = searchParams.get('listId')
+    const itemIdReference = searchParams.get('itemId')
+
+
     let itemsMap = [];
-
-    function needsUpdate(cachedLists, dbLists) {
-        const parsedCachedLists = JSON.parse(cachedLists)
-        if (!parsedCachedLists)
-            return true
-
-        if (parsedCachedLists.length != dbLists.length)
-            return true
-
-        if (parsedCachedLists.length == 0 || dbLists.length == 0)
-            return false
-
-        const newestCacheTime = Math.max(...parsedCachedLists.map(listItem => new Date(listItem.updated_at).getTime()))
-        const newestDbTime = Math.max(...dbLists.map(listItem => new Date(listItem.updated_at).getTime()))
-
-        return newestDbTime > newestCacheTime;
-    }
 
     if (lists) {
         itemsMap = lists.map((item) => (
-            <ListElement setIsUpdatingData={setIsUpdatingData}
+            <ListElement
+                setIsUpdatingData={setIsUpdatingData}
+                autoOpen={item.id === listIdReference} autoOpenHighlight={itemIdReference}
                 key={item.id} setLists={setLists}
                 ownerId={item.owner_id} listId={item.id} userId={session?.user.id}
                 title={item.title} donePercentage={item.done_percentage} isDone={item.is_done} todoItems={item.todo_tasks}
@@ -52,7 +43,7 @@ export default function MainDashboard({ initialLists, session }) {
 
             {/* Wrapped the form in the same max-width as the canvas so they align perfectly */}
             <div className="w-full max-w-[700px]">
-                <ListAddingForm setLists={setLists} userLists={lists} userId={session?.user.id} session={session} />
+                <ListAddingForm setIsUpdatingData={setIsUpdatingData} setLists={setLists} userLists={lists} userId={session?.user.id} session={session} />
             </div>
 
             {/* 🚨 THE WIDTH FIX: w-[700px] becomes w-full max-w-[700px] */}

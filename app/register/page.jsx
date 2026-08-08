@@ -19,7 +19,7 @@ export default function RegisterPage() {
     const [username, setUsername] = React.useState("")
     const [password, setPassword] = React.useState("")
 
-    const isColor = email.length > 0 && username.length > 0 && password.length > 0;
+    const isColor = email.length > 0 && username.length > 0 && password.length > 5;
 
     async function HandleSubmit(e) {
         e.preventDefault();

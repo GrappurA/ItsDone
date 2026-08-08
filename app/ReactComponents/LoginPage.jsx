@@ -11,7 +11,7 @@ export default function LoginPage() {
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
 
-    const isColor = email.length > 0 && password.length > 0;
+    const isColor = email.length > 0 && password.length > 5;
 
     async function HandleLogin(e) {
         e.preventDefault()

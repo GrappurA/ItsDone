@@ -1,8 +1,7 @@
 "use client"
 
-import { div } from "motion/react-client"
+import { useRouter } from "next/navigation"
 
-// 1. Fixed: created_at is now a string!
 interface TodoTask {
     id: number
     title: string
@@ -10,7 +9,6 @@ interface TodoTask {
     created_at: string
 }
 
-// 2. Fixed: data is an array of the singular TodoTask
 interface TasksTabProps {
     tasks: {
         data: TodoTask[]
@@ -19,8 +17,13 @@ interface TasksTabProps {
 
 // 3. Updated the prop type name
 export default function TasksTab({ tasks }: TasksTabProps) {
+    const router = useRouter()
+    function HandleClick(task) {
+        const listId = task.list_id
+        const itemId = task.id
+        router.push(`/home?listId=${listId}&itemId=${itemId}`)
+    }
 
-    // (Removed the unused todoTasks map variable that was sitting here)
 
     return (
         // 1. Reduced padding on mobile (p-4 md:p-6)
@@ -38,9 +41,9 @@ export default function TasksTab({ tasks }: TasksTabProps) {
             <div className="flex flex-col gap-4 md:gap-2">
                 {tasks.data.map((task, index) => (
                     <div
+                        onClick={() => { HandleClick(task) }}
+
                         key={task.id}
-                        // 3. ROW FLIP: Flex column on mobile (looks like a card), 12-col grid on desktop.
-                        // I gave the mobile version a permanent border and shadow so they look like stacked physical cards!
                         className="flex flex-col md:grid md:grid-cols-12 md:gap-4 md:items-center p-4 md:p-3 border-2 border-black md:border-transparent md:hover:border-black rounded-xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] md:shadow-none hover:bg-[#D0FFCE] transition-all duration-200 cursor-pointer"
                     >
                         {/* Index: Completely hidden on mobile */}
@@ -62,7 +65,7 @@ export default function TasksTab({ tasks }: TasksTabProps) {
                             </p>
 
                             {/* Date: Slightly bigger padding on mobile for touch targets */}
-                            <p className="md:col-span-2 text-xl md:text-2xl font-mono text-gray-600 bg-gray-100 p-2 md:p-1 md:ml-[-12%] rounded-lg text-center w-fit">
+                            <p className="md:col-span-2 text-xl md:text-2xl font-mono text-gray-600 bg-gray-100 p-2 md:p-0 md:ml-[-12%] rounded-lg text-center w-fit">
                                 {task.created_at.split("T")[0]}
                             </p>
 

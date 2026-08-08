@@ -23,7 +23,7 @@ export default function Header(props) {
 
     useEffect(() => {
         let myChannel;
-        let isMounted = true; // 🚨 Race condition fix applied!
+        let isMounted = true; // 
 
         async function fetchStatsData() {
             if (!session?.user?.id || !session?.supabaseAccessToken) return;
@@ -65,14 +65,17 @@ export default function Header(props) {
             <div className="flex flex-row items-center justify-between max-w-7xl mx-auto w-full gap-2">
 
                 {/* 1. LEFT SIDE: Profile (z-10 keeps it clickable if they overlap on tiny screens) */}
-                <div onClick={HandleProfileClick} className="flex items-center gap-2 md:gap-4 z-10">
+                <div title='Stats' data-tooltip-target="tooltip" onClick={HandleProfileClick} className="flex items-center gap-2 md:gap-4 z-10">
                     <div className="transition-transform duration-300 hover:scale-105 cursor-pointer w-10 h-10 md:w-14 md:h-14 rounded-full overflow-hidden border-2 border-black hover:border-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
                         <Image src={profilePic} width={70} height={70} alt="ProfilePic" loading="eager" />
                     </div>
                     <p className="hidden md:block transition-transform duration-300 hover:scale-105 cursor-pointer font-logo text-3xl md:text-5xl text-white">
                         {session.user.username}
                     </p>
+
                 </div>
+
+
 
                 {/* 2. RIGHT SIDE: Stats + Menu */}
                 <div className="flex items-center gap-3 md:gap-6 z-10">
@@ -88,7 +91,7 @@ export default function Header(props) {
 
             {/* 3. DEAD CENTER: The Logo */}
             {/* left-1/2 pushes the left edge to the middle, -translate-x-1/2 pulls it back by exactly half its own width! */}
-            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-0 pointer-events-auto">
+            <div title='Home Page' className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-0 pointer-events-auto">
                 <p onClick={() => router.push("/home")} className="font-logo text-3xl md:text-5xl transition-transform duration-300 hover:scale-105 cursor-pointer text-white">
                     <u className="decoration-[#D0FFCE] decoration-4 md:decoration-[6px] underline-offset-[6px] md:underline-offset-[10px]">ItsDone✔️</u>
                 </p>

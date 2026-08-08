@@ -47,7 +47,7 @@ export default function StarProgressChart(props) {
 
     return (
         // 🚨 1. RESPONSIVE FIX: w-full max-w-[600px] and flex-col
-        <div className="w-full max-w-[600px] h-[400px] md:h-[450px] flex flex-col bg-[#cefffd] border-4 border-black rounded-2xl p-3 md:p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+        <div className="w-full max-w-[600px] h-[350] md:h-[350px] flex flex-col bg-[#cefffd] border-4 border-black rounded-2xl p-3 md:p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
 
             {/* 🚨 2. HEADER FIX: Stack on mobile (flex-col), side-by-side on desktop (md:flex-row) */}
             <div className='flex flex-col md:flex-row w-full justify-between items-start md:items-center gap-4 md:gap-0 mb-4'>

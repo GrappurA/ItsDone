@@ -4,21 +4,31 @@ import Image from "next/image"
 import filledStar from "./src/filledStarIcon.png"
 import unfilledStar from "./src/unfilledStarIcon.png"
 
-import { useEffect, useState } from "react"
+import { use, useEffect, useState } from "react"
 import createBrowserClient from "../../scripts/createBrowserClient"
 import UseAnimations from "react-useanimations"
 import trash from 'react-useanimations/lib/trash'
+import { useRouter } from "next/navigation"
 
 export default function ListElement(props) {
 
     //variables
     const [isOpen, setIsOpen] = useState(false);
+    const router = useRouter()
 
     //every list has its own itemsList(list of todo items)
     const [itemsList, setItemsList] = useState(props.todoItems || [])
     useEffect(() => {
         setItemsList(props.todoItems || [])
     }, [props.todoItems])
+
+    useEffect(() => {
+        if (props.autoOpen && props.autoOpenHighlight) {
+            setIsOpen(true)
+
+        }
+
+    }, [props.autoOpen])
 
     let listItemsMap;
 
@@ -52,6 +62,7 @@ export default function ListElement(props) {
 
         try {
             props.setIsUpdatingData(true)
+
             const { data: realTask, error } = await supabase
                 .from("todo_tasks")
                 .insert({
@@ -163,20 +174,21 @@ export default function ListElement(props) {
         listItemsMap = itemsList.map((item, index) => {
             const isDone = item.status === true || item.status === "completed" || item.status === "on";
             return (
-                <div
-                    key={index}
-                    // 🚨 RESPONSIVE FIX: gap-2 on mobile, smaller padding, adjusted text sizes
-                    className={`flex justify-between items-center gap-2 md:gap-4 p-3 md:p-5 mb-4 border-4 border-black rounded-2xl transition-all duration-300 
+                <div key={index} className="">
+                    {item.id === props.autoOpenHighlight ? <p className="text-5xl text-red-400 animate-bounce">! Attention </p> : ""}
+                    <div
+                        // 🚨 RESPONSIVE FIX: gap-2 on mobile, smaller padding, adjusted text sizes
+                        className={`w-full flex justify-between items-center gap-2 md:gap-4 p-3 md:p-5 mb-4 border-4 border-black rounded-2xl transition-all duration-300 
                         shadow-[7px_7px_0px_0px_rgba(0,0,0,1)] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]
                           ${isDone ? "bg-gray-100 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] translate-y-[2px]"
-                            : "bg-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1"
-                        }`}>
+                                : "bg-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1"
+                            }`}>
 
-                    <button
-                        onClick={() => handleDeleteTask(item.id)}
-                        title="Delete Task"
-                        // Shrinking button for mobile
-                        className="
+                        <button
+                            onClick={() => handleDeleteTask(item.id)}
+                            title="Delete Task"
+                            // Shrinking button for mobile
+                            className="
         flex items-center justify-center w-10 h-10 md:w-12 md:h-12 shrink-0
         bg-[#ff4a4a] text-black text-xl md:text-2xl font-black leading-none
         border-4 border-black rounded-xl 
@@ -185,28 +197,31 @@ export default function ListElement(props) {
         hover:bg-[#ff2b2b] hover:shadow-[0px_0px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1
         active:translate-y-[4px] active:translate-x-[4px] active:shadow-none
     "
-                    >
-                        X
-                    </button>
+                        >
+                            X
+                        </button>
 
-                    {/* 🚨 RESPONSIVE FIX: flex-1 takes up remaining space instead of hard max-width */}
-                    <p className={`text-xl md:text-3xl font-bold truncate pr-2 flex-1 transition-all duration-300 ${isDone ? "line-through text-gray-400 decoration-4 decoration-black" : "text-black"
-                        }`}>
-                        {item.title}
-                    </p>
-
-                    <button
-                        onClick={() => handleToggleTask(item.id)}
-                        // Shrinking button and text for mobile
-                        className={`shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] shrink-0
-                            px-2 py-2 md:px-4 md:py-2 border-4 border-black rounded-xl font-black text-sm md:text-xl cursor-pointer transition-all active:translate-y-[4px] active:translate-x-[4px] active:shadow-none ${isDone
-                                ? "bg-[#D0FFCE] shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
-                                : "bg-[#fffdce] shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:bg-[#fff770] "
+                        {/* 🚨 RESPONSIVE FIX: flex-1 takes up remaining space instead of hard max-width */}
+                        <p className={`text-xl md:text-3xl font-bold truncate pr-2 flex-1 transition-all duration-300 ${isDone ? "line-through text-gray-400 decoration-4 decoration-black" : "text-black"
                             }`}>
-                        {isDone ? "Done ✔" : "Pending"}
-                    </button>
+                            {item.title}
+                        </p>
+
+                        <button
+                            onClick={() => handleToggleTask(item.id)}
+                            // Shrinking button and text for mobile
+                            className={`shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] shrink-0
+                            px-2 py-2 md:px-4 md:py-2 border-4 border-black rounded-xl font-black text-sm md:text-xl cursor-pointer transition-all active:translate-y-[4px] active:translate-x-[4px] active:shadow-none ${isDone
+                                    ? "bg-[#D0FFCE] shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
+                                    : "bg-[#fffdce] shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:bg-[#fff770] "
+                                }`}>
+                            {isDone ? "Done ✔" : "Pending"}
+                        </button>
+                    </div>
+
                 </div>
             )
+
         }
         )
     }
@@ -219,7 +234,6 @@ export default function ListElement(props) {
 
                 <p className="text-center text-3xl md:text-4xl relative z-20 bg-[#cefffd] truncate px-2">{props.title}</p>
 
-                {/* 🚨 RESPONSIVE FIX: w-full instead of w-[200px] so it matches the card body */}
                 <section className="flex items-stretch border-y-2 border-black w-full">
                     <div className="bg-[#C3EDAB] flex items-center justify-center border-r-2 border-black px-4 py-1 w-1/3">
                         <p className="font-bold text-3xl leading-none m-0">{donePercentage}%</p>
@@ -241,7 +255,10 @@ export default function ListElement(props) {
             {isOpen &&
                 <div
                     className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-2 md:p-4"
-                    onClick={() => setIsOpen(false)}>
+                    onClick={() => {
+                        setIsOpen(false)
+                        router.push('/home')
+                    }}>
 
                     {/* 🚨 RESPONSIVE FIX: max-w-[800px] and max-h-[95vh] prevents overflow on phones */}
                     <div
@@ -255,6 +272,10 @@ export default function ListElement(props) {
                         <div className="bg-[#cefffd] border-b-4 border-black p-4 md:p-6 relative z-20 flex flex-col md:flex-row gap-4 justify-between items-center shrink-0">
 
                             <section className="flex items-center justify-between w-full md:w-auto">
+                                <section onClick={() => { setIsOpen(false) }}
+                                    className="flex items-center justify-center border-4 rounded-3xl mr-3 hover:scale-110 transition-all active:scale-150 active:bg-red-400">
+                                    <p className="h-[40%] pr-1 pl-1">{'<'}</p>
+                                </section>
                                 <h2 className="text-3xl md:text-5xl font-extrabold m-0 truncate pr-4 flex-1">{props.title}</h2>
                                 <button
                                     onClick={() => { handleDeleteList(props.listId) }}
@@ -326,7 +347,7 @@ export default function ListElement(props) {
                         </div>
 
                     </div>
-                </div>
+                </div >
             }
         </>
     )

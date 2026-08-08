@@ -20,6 +20,7 @@ export default function ListAddingForm(props) {
         };
 
         props.setLists(prevLists => [optimisticList, ...prevLists]);
+        props.setIsUpdatingData(true)
 
         const { data, error } = await supabase
             .from("todo_lists")
@@ -36,6 +37,7 @@ export default function ListAddingForm(props) {
             props.setLists(prevLists =>
                 prevLists.map(list => list.id === fakeId ? data : list)
             );
+            props.setIsUpdatingData(false)
         }
     }
 
