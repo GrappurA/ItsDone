@@ -131,11 +131,17 @@ export default function ListElement(props) {
         props.setLists(prev => prev.filter(l => l.id !== listId))
 
         try {
-            const { error } = await supabase
+            const { listError } = await supabase
                 .from('todo_lists')
                 .delete()
                 .eq('id', listId)
-            if (error)
+
+            const { taskError } = await supabase
+                .from('todo_tasks')
+                .delete()
+                .eq('list_id', listId)
+
+            if (listError || taskError)
                 throw new Error('Error deleting list')
         } catch (err) {
             alert(err)
