@@ -19,7 +19,7 @@ interface TasksTabProps {
 // 3. Updated the prop type name
 export default function TasksTab({ tasks }: TasksTabProps) {
     const router = useRouter()
-    function HandleClick(task) {
+    function HandleClick(task: TodoTask) {
         const listId = task.list_id
         const itemId = task.id
         router.push(`/home?listId=${listId}&itemId=${itemId}`)
