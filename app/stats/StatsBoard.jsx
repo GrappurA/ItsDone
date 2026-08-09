@@ -1,12 +1,7 @@
 "use client"
 
-import React, { useEffect } from "react";
-import { useSession } from "next-auth/react";
-import { data, div } from "motion/react-client";
-
+import { useState } from "react";
 import { nerkoOne } from '../fonts/NerkoOne';
-import LoginPage from "../ReactComponents/LoginPage"
-import CircularProgress from "../ReactComponents/CircularSize"
 import TasksTab from "../ReactComponents/TasksTab"
 
 import dynamic from "next/dynamic";
@@ -17,8 +12,11 @@ const StarProgressChart = dynamic(() => import('../ReactComponents/Plot'),
     })
 
 export default function StatsBoard({ initialList, initialSettings, initialTasks }) {
-    const [doneThreshold, setDoneThreshold] = React.useState(initialSettings.data[0]?.done_threshold || 0,)
-    const [cardOpenId, setCardOpenId] = React.useState(null)
+    const [doneThreshold, setDoneThreshold] = useState(initialSettings.data[0]?.done_threshold || 0,)
+    const [cardOpenId, setCardOpenId] = useState(null)
+
+    const doneTasks = initialList?.data.filter(task => task.is_done === true)
+    const avgDonePercentage = (doneTasks.length / initialTasks?.data.length) * 100
 
     const modalContent = {
         "1": {
@@ -39,7 +37,7 @@ export default function StatsBoard({ initialList, initialSettings, initialTasks 
         "4": {
             title: "📊 Avg Completion",
             color: "bg-[#fffdce]",
-            details: <p>Your average completion rate is 85%.</p>
+            details: <p>Your average completion rate is {avgDonePercentage}.</p>
         }
     }
 
@@ -63,8 +61,8 @@ export default function StatsBoard({ initialList, initialSettings, initialTasks 
                         <p className="text-xl md:text-2xl font-bold text-gray-800 border-b-4 border-black pb-2 mb-4">
                             ✅Task Info
                         </p>
-                        <p className="text-4xl md:text-5xl font-black text-black">
-                            Tasks
+                        <p className="text-4xl md:text-3xl font-black text-black">
+                            {initialTasks ? `Overall Tasks: ${initialTasks.data.length}` : "Your Tasks"}
                         </p>
                     </div>
 
@@ -96,8 +94,8 @@ export default function StatsBoard({ initialList, initialSettings, initialTasks 
                         <p className="text-xl md:text-2xl font-bold text-gray-800 border-b-4 border-black pb-2 mb-4">
                             📊Avg Completion
                         </p>
-                        <p className="text-4xl md:text-5xl font-black text-black">
-                            done here {cardOpenId}
+                        <p className="text-4xl md:text-3xl font-black text-black">
+                            {initialTasks ? `Average Done: ${avgDonePercentage}%` : `Your average`}
                         </p>
                     </div>
                 </div>

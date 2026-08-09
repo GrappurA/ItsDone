@@ -181,7 +181,7 @@ export default function ListElement(props) {
             const isDone = item.status === true || item.status === "completed" || item.status === "on";
             return (
                 <div key={index} className="">
-                    {item.id === props.autoOpenHighlight ? <p className="text-5xl text-red-400 animate-bounce">! Attention </p> : ""}
+                    {item.id === props.autoOpenHighlight ? <p className="text-5xl pt-15 text-red-400 animate-bounce">! Attention </p> : ""}
                     <div
                         // 🚨 RESPONSIVE FIX: gap-2 on mobile, smaller padding, adjusted text sizes
                         className={`w-full flex justify-between items-center gap-2 md:gap-4 p-3 md:p-5 mb-4 border-4 border-black rounded-2xl transition-all duration-300 
