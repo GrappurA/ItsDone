@@ -7,6 +7,7 @@ interface TodoTask {
     title: string
     status: boolean
     created_at: string
+    list_id: number
 }
 
 interface TasksTabProps {
