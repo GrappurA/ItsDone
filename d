@@ -1,5 +1,2 @@
-  cachedListsVSdb[m
-  deleteTask[m
-  main[m
-* [32mrealTimeStarsUpdate[m
+* [32mmain[m
   statsPage[m
