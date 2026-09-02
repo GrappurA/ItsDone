@@ -11,7 +11,7 @@ export default function Header() {
     const { data: session } = useSession()
     if (session) {
         return (
-            <footer className="select-none bg-[#9D9695] text-center" style={{ borderTop: "solid black 5px", borderBottom: "solid black 5px" }}>
+            <footer className="select-none bg-[#9D9695] text-center border-t-4" style={{ borderTop: "solid black 5px" }}>
                 <p>©ItsDone.com</p>
                 <p>31 10 06 active users</p>
                 <p className="bg-red-100 w-fit p-1 mb-1 ml-auto mr-auto rounded-xl">Buy me a coffee</p>

@@ -4,13 +4,20 @@ import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import morePic from "../src/more.png";
 import { signOut } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 export default function MoreMenu() {
     const [isOpen, setIsOpen] = useState(false);
+    const router = useRouter()
 
-    async function HandleSignOut() {
+
+    function HandleSignOut() {
         localStorage.clear();
         signOut();
+    }
+
+    function HandleEverydayTasksClick() {
+        router.push('/everyday-tasks')
     }
 
     return (
@@ -34,6 +41,9 @@ export default function MoreMenu() {
                     >
                         <ul className="flex flex-col text-lg text-white">
 
+                            <li onClick={HandleEverydayTasksClick} className="hover:bg-white/10 p-3 cursor-pointer transition-colors border-b border-white/10">
+                                🎯 Everyday Tasks
+                            </li>
                             <li className="hover:bg-white/10 p-3 cursor-pointer transition-colors border-b border-white/10">
                                 👥 Friends
                             </li>

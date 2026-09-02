@@ -44,7 +44,7 @@ export default function StatsBoard({ initialList, initialSettings, initialTasks 
 
     return (
         // 1. RESPONSIVE FIX: Changed `h-` to `min-h-` so it stretches on mobile if content stacks, added md:p-6 for better desktop spacing
-        <div className={`bg-[#d0ffce] p-2 md:p-6 ${nerkoOne.className} min-h-[72.9vh] select-none`} >
+        <div className={`bg-[#d0ffce] p-2 md:p-3 ${nerkoOne.className} min-h-[72.9vh] select-none `} >
 
             {/* Shrink the massive title on mobile */}
             <p className="text-4xl md:text-[62px] bg-[#fffdce] w-fit border-4 border-black rounded-2xl mb-4 md:mb-6 px-4 py-1">
@@ -72,8 +72,8 @@ export default function StatsBoard({ initialList, initialSettings, initialTasks 
                         <p className="text-xl md:text-2xl font-bold text-gray-800 border-b-4 border-black pb-2 mb-4">
                             📝List Info
                         </p>
-                        <p className="text-4xl md:text-5xl font-black text-black">
-                            Lists
+                        <p className="text-4xl md:text-3xl font-black text-black">
+                            Overall Lists: {initialList.data.length}
                         </p>
                     </div>
 

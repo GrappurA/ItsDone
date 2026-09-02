@@ -60,7 +60,7 @@ export default function Header(props) {
     if (!session) return null;
 
     return (
-        <header className="relative select-none w-full bg-[#9D9695] border-y-4 border-black p-2 md:p-3">
+        <header className="relative select-none w-full bg-[#9D9695] border-b-4 border-black p-2 md:p-3">
 
             <div className="flex flex-row items-center justify-between max-w-7xl mx-auto w-full gap-2">
 
