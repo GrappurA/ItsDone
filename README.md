@@ -1,4 +1,4 @@
-# ItsDone ✔️ itsdone-two.vercel.app/home
+# ItsDone ✔️ [ItsDone](itsdone-two.vercel.app/home)
 
 A high-performance, full-stack task management application featuring a bold neo-brutalist UI, optimistic state updates, and a rock-solid relational database architecture.
 
