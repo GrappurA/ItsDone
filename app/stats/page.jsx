@@ -19,7 +19,7 @@ export default async function StatsPage() {
             // supabase.from("profiles").select("*").eq("id", session.user.id).single(),
             supabase.from("todo_lists").select("*").eq("owner_id", session.user.id).order("created_at", { ascending: true }),
             supabase.from("user_settings").select("*").eq("user_id", session.user.id),
-            supabase.from("todo_tasks").select("*").eq("owner_id", session.user.id)
+            supabase.from("todo_tasks").select("*").eq("owner_id", session.user.id).order("created_at", { ascending: false })
         ]
     )
 

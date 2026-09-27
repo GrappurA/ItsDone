@@ -15,7 +15,7 @@ export default function StatsBoard({ initialList, initialSettings, initialTasks 
     const [doneThreshold, setDoneThreshold] = useState(initialSettings.data[0]?.done_threshold || 0,)
     const [cardOpenId, setCardOpenId] = useState(null)
 
-    const doneTasks = initialList?.data.filter(task => task.is_done === true)
+    const doneTasks = initialTasks?.data.filter(task => task.status === true)
     const avgDonePercentage = ((doneTasks.length / initialTasks?.data.length) * 100).toFixed(2)
 
     const modalContent = {
