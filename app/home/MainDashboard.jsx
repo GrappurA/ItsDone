@@ -7,12 +7,15 @@ import UpdatingPopUp from "../ReactComponents/UpdatingPopUp"
 import ListAddingForm from "../ReactComponents/ListAddingForm"
 import { nerkoOne } from '../fonts/NerkoOne';
 import ListElement from "../ReactComponents/ListElement"
+import PomodoroPopup from "../ReactComponents/PomodoroPopup";
 
 export default function MainDashboard({ initialLists, session }) {
 
     const [lists, setLists] = useState(initialLists)
     const [isLoading, setIsLoading] = useState(false)
     const [isUpdatingData, setIsUpdatingData] = useState(false)
+    const [isPomodoroOpen, setIsPomodoroOpen] = useState(false)
+
 
     const searchParams = useSearchParams()
     const listIdReference = searchParams.get('listId')
@@ -42,7 +45,18 @@ export default function MainDashboard({ initialLists, session }) {
             }
 
             {/* Wrapped the form in the same max-width as the canvas so they align perfectly */}
-            <div className="w-full max-w-[700px]">
+            <div className="w-full max-w-[700px] flex">
+                <button
+                    onClick={(e) => {
+                        e.stopPropagation(); // Prevents triggering the HandleProfileClick on the parent div
+                        setIsPomodoroOpen(true)
+
+                    }}
+                    title='Pomodoro' data-tooltip-target="tooltip"
+                    className="px-4 py-1.5 md:py-2 text-black text-5xl mb-1 hover:scale-110 active:scale-90"
+                >
+                    🍅
+                </button>
                 <ListAddingForm setIsUpdatingData={setIsUpdatingData} setLists={setLists} userLists={lists} userId={session?.user.id} session={session} />
             </div>
 
@@ -57,6 +71,8 @@ export default function MainDashboard({ initialLists, session }) {
                 </ul>
 
             </div>
+            {isPomodoroOpen && <PomodoroPopup setIsPomodoroOpen={setIsPomodoroOpen} />}
+
         </div>
     )
 }

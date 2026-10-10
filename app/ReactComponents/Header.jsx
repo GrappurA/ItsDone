@@ -65,17 +65,14 @@ export default function Header(props) {
             <div className="flex flex-row items-center justify-between max-w-7xl mx-auto w-full gap-2">
 
                 {/* 1. LEFT SIDE: Profile (z-10 keeps it clickable if they overlap on tiny screens) */}
-                <div title='Stats' data-tooltip-target="tooltip" onClick={HandleProfileClick} className="flex items-center gap-2 md:gap-4 z-10">
-                    <div className="transition-transform duration-300 hover:scale-105 cursor-pointer w-10 h-10 md:w-14 md:h-14 rounded-full overflow-hidden border-2 border-black hover:border-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                <div className="flex items-center gap-2 md:gap-4 z-10">
+                    <div title='Stats' data-tooltip-target="tooltip" onClick={HandleProfileClick} className="transition-transform duration-300 hover:scale-105 cursor-pointer w-10 h-10 md:w-14 md:h-14 rounded-full overflow-hidden border-2 border-black hover:border-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
                         <Image src={profilePic} width={70} height={70} alt="ProfilePic" loading="eager" />
                     </div>
-                    <p className="hidden md:block transition-transform duration-300 hover:scale-105 cursor-pointer font-logo text-3xl md:text-5xl text-white">
+                    <p title='Stats' data-tooltip-target="tooltip" onClick={HandleProfileClick} className="hidden md:block transition-transform duration-300 hover:scale-105 cursor-pointer font-logo text-3xl md:text-5xl text-white">
                         {session.user.username}
                     </p>
-
                 </div>
-
-
 
                 {/* 2. RIGHT SIDE: Stats + Menu */}
                 <div className="flex items-center gap-3 md:gap-6 z-10">
@@ -96,7 +93,6 @@ export default function Header(props) {
                     <u className="decoration-[#D0FFCE] decoration-4 md:decoration-[6px] underline-offset-[6px] md:underline-offset-[10px]">ItsDone✔️</u>
                 </p>
             </div>
-
         </header >
     )
 }
