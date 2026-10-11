@@ -3,17 +3,24 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import morePic from "../src/more.png";
-import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import createSupabaseBrowserClient from "../../scripts/createBrowserClient";
 
 export default function MoreMenu() {
     const [isOpen, setIsOpen] = useState(false);
     const router = useRouter()
+    const supabase = createSupabaseBrowserClient();
 
+    async function HandleSignOut() {
+        const { error } = await supabase.auth.signOut();
+        if (error) {
+            console.error("Error signing out:", error);
+            return;
+        }
 
-    function HandleSignOut() {
-        localStorage.clear();
-        signOut();
+        setIsOpen(false);
+        router.replace("/");
+        router.refresh();
     }
 
     function HandleEverydayTasksClick() {

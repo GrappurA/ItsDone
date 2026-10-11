@@ -6,8 +6,7 @@ A high-performance, full-stack task management application featuring a bold neo-
 
 * **Frontend:** Next.js 16 (App Router) & React
 * **Styling:** Tailwind CSS (Neo-Brutalist aesthetic)
-* **Authentication:** NextAuth.js
-* **Backend / Database:** Supabase (PostgreSQL)
+* **Authentication & Backend / Database:** Supabase Auth and Supabase (PostgreSQL)
 
 ## ✨ Key Features
 

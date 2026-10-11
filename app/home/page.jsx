@@ -2,15 +2,13 @@
 import MainDashboard from "./MainDashboard"
 import LoginPage from "../ReactComponents/LoginPage"
 
-import { authOptions } from "../api/auth/[...nextauth]/route";
 import createClient from "../../scripts/createServerClient";
-import { getServerSession } from "next-auth"
-
 export default async function HomePage() {
-  const session = await getServerSession(authOptions)
   const supabase = await createClient();
+  const { data: { user }, error: authError } = await supabase.auth.getUser();
+  if (authError && authError.name !== "AuthSessionMissingError") throw authError;
 
-  if (!session?.user.id) {
+  if (!user) {
     return (<LoginPage />)
   }
 
@@ -18,7 +16,7 @@ export default async function HomePage() {
     .from("todo_lists")
     .select(`*,
        todo_tasks(id, list_id, owner_id, title, status)`)
-    .eq("owner_id", session.user.id)
+    .eq("owner_id", user.id)
     .order("created_at", { ascending: false })
 
   if (error) {
@@ -27,7 +25,7 @@ export default async function HomePage() {
 
   return (
     <>
-      <MainDashboard initialLists={initialLists || []} session={session} />
+      <MainDashboard initialLists={initialLists || []} user={user} />
     </>
   )
 

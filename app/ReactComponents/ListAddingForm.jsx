@@ -1,7 +1,3 @@
-import { title } from "process";
-import { createClient } from "@supabase/supabase-js";
-import { useSession } from "next-auth/react";
-
 import createBrowserClient from "../../scripts/createBrowserClient"
 
 export default function ListAddingForm(props) {

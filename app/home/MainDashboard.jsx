@@ -9,18 +9,16 @@ import { nerkoOne } from '../fonts/NerkoOne';
 import ListElement from "../ReactComponents/ListElement"
 import PomodoroPopup from "../ReactComponents/PomodoroPopup";
 
-export default function MainDashboard({ initialLists, session }) {
+export default function MainDashboard({ initialLists, user }) {
 
     const [lists, setLists] = useState(initialLists)
     const [isLoading, setIsLoading] = useState(false)
     const [isUpdatingData, setIsUpdatingData] = useState(false)
     const [isPomodoroOpen, setIsPomodoroOpen] = useState(false)
 
-
     const searchParams = useSearchParams()
     const listIdReference = searchParams.get('listId')
     const itemIdReference = searchParams.get('itemId')
-
 
     let itemsMap = [];
 
@@ -30,7 +28,7 @@ export default function MainDashboard({ initialLists, session }) {
                 setIsUpdatingData={setIsUpdatingData}
                 autoOpen={item.id === listIdReference} autoOpenHighlight={itemIdReference}
                 key={item.id} setLists={setLists}
-                ownerId={item.owner_id} listId={item.id} userId={session?.user.id}
+                ownerId={item.owner_id} listId={item.id} userId={user.id}
                 title={item.title} donePercentage={item.done_percentage} isDone={item.is_done} todoItems={item.todo_tasks}
             />
         ))
@@ -57,7 +55,7 @@ export default function MainDashboard({ initialLists, session }) {
                 >
                     🍅
                 </button>
-                <ListAddingForm setIsUpdatingData={setIsUpdatingData} setLists={setLists} userLists={lists} userId={session?.user.id} session={session} />
+                <ListAddingForm setIsUpdatingData={setIsUpdatingData} setLists={setLists} userLists={lists} userId={user.id} />
             </div>
 
             {/* 🚨 THE WIDTH FIX: w-[700px] becomes w-full max-w-[700px] */}
@@ -71,7 +69,7 @@ export default function MainDashboard({ initialLists, session }) {
                 </ul>
 
             </div>
-            {isPomodoroOpen && <PomodoroPopup setIsPomodoroOpen={setIsPomodoroOpen} />}
+            {isPomodoroOpen && <PomodoroPopup setIsPomodoroOpen={setIsPomodoroOpen} userId={user.id} />}
 
         </div>
     )

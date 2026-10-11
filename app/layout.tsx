@@ -4,8 +4,6 @@ import "./globals.css";
 
 import React from "react";
 
-import AuthProvider from "./ReactComponents/AuthProvider"
-
 import Header from "./ReactComponents/Header"
 import Footer from "./ReactComponents/Footer"
 
@@ -30,24 +28,24 @@ export default function RootLayout({
       lang="en"
       className={`${alfaSlab.variable} h-full antialiased`}
     >
-      <AuthProvider>
-        <body className="flex flex-col h-[100%]">
 
-          <div className="shrink-0">
-            <Header />
-          </div>
+      <body className="flex flex-col h-[100%]">
 
-          <div className="flex-1">
-            {children}
-          </div>
+        <div className="shrink-0">
+          <Header />
+        </div>
+
+        <div className="flex-1">
+          {children}
+        </div>
 
 
-          <div className="shrink-0">
-            <Footer />
-          </div>
+        <div className="shrink-0">
+          <Footer />
+        </div>
 
-        </body>
-      </AuthProvider>
+      </body>
+
     </html >
   );
 }

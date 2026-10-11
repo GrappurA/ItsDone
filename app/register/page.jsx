@@ -1,18 +1,13 @@
 "use client"
-import { form } from "motion/react-client";
 import Link from "next/link";
 import { nerkoOne } from '../fonts/NerkoOne';
 import ErrorPopup from "../ReactComponents/ErrorPopup"
 
-import { createClient } from '@supabase/supabase-js';
 import React from "react";
-
-export const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-);
+import createSupabaseBrowserClient from "../../scripts/createBrowserClient";
 export default function RegisterPage() {
 
+    const supabase = createSupabaseBrowserClient();
     const [error, setError] = React.useState("")
 
     const [email, setEmail] = React.useState("")

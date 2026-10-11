@@ -1,14 +1,32 @@
 "use client"
+import useSupabaseBrowser from "../../scripts/createBrowserClient"
 import { useState } from "react"
 
-export default function PomodoroPopup({ setIsPomodoroOpen }) {
-    const [rounds, setRounds] = useState(0)
+export default function PomodoroPopup({ setIsPomodoroOpen, userId }) {
+    const supabase = useSupabaseBrowser()
 
-    function handleLogPomodoro(formData) {
-        const sesionName = formData.get('sessionName')
+    const [rounds, setRounds] = useState(1)
+
+    async function handleLogPomodoro(formData) {
+        const sessionName = formData.get('sessionName')
         const sessionDate = formData.get('sessionDate')
 
+        try {
+            const { data, error } = await supabase
+                .from('pomodoro_sessions')
+                .insert({
+                    user_id: userId,
+                    session_name: sessionName,
+                    created_at: sessionDate ? sessionDate : Date.now(),
+                    session_rounds: rounds
+                })
 
+            if (error) throw new Error('error adding pomodoro session')
+
+        } catch (error) {
+            alert(error)
+            console.log(error)
+        }
     }
 
     return (
@@ -35,6 +53,7 @@ export default function PomodoroPopup({ setIsPomodoroOpen }) {
                         id="sessionName"
                         name="sessionName"
                         placeholder="What did you work on?"
+                        defaultValue={`Pomodoro Session ${new Date().toISOString().split('T')[0].replaceAll('-', '/')}`}
                         className="w-full border-4 border-black rounded-xl p-3 text-xl md:text-2xl outline-none shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] focus:shadow-[0px_0px_0px_0px_rgba(0,0,0,1)] transition-all bg-[#cefffd] placeholder:text-black/40"
                         required
                     />
@@ -84,7 +103,7 @@ export default function PomodoroPopup({ setIsPomodoroOpen }) {
                         type="date"
                         id="sessionDate"
                         name="sessionDate"
-                        // defaultValue={new Date().toISOString().split('T')[0]} 
+                        defaultValue={new Date().toISOString().split('T')[0]}
                         className="w-full border-4 border-black rounded-xl p-3 text-xl md:text-2xl outline-none shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] focus:shadow-[0px_0px_0px_0px_rgba(0,0,0,1)] transition-all bg-white"
                         required
                     />

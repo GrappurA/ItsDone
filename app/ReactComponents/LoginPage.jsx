@@ -3,11 +3,16 @@
 import Link from "next/link";
 import { nerkoOne } from '../fonts/NerkoOne';
 
-import { signIn } from "next-auth/react";
+import createSupabaseBrowserClient from "../../scripts/createBrowserClient";
+import ErrorPopup from "./ErrorPopup";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export default function LoginPage() {
 
+    const supabase = createSupabaseBrowserClient();
+    const router = useRouter();
+    const [error, setError] = useState("");
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
 
@@ -16,23 +21,24 @@ export default function LoginPage() {
     async function HandleLogin(e) {
         e.preventDefault()
 
-        const result = await signIn("credentials", {
-            email: email,
-            password: password,
-            redirect: true,
-            callbackUrl: "/home"
+        const { error } = await supabase.auth.signInWithPassword({
+            email,
+            password,
         });
 
-        if (result?.error) {
-            alert("Invalid email or password");
+        if (error) {
+            setError(error.message);
             return;
         }
 
+        router.replace("/home");
+        router.refresh();
     }
 
 
     return (
         <div className={`flex flex-col justify-center items-center min-h-[85vh] ${nerkoOne.className} select-none`}>
+            <ErrorPopup message={error} onClose={() => setError("")} />
             <h1 className="text-6xl mb-6 tracking-wide drop-shadow-md">Welcome Back!</h1>
             {/* The Form: Thick borders, cream background, and the hard black shadow */}
             <form
@@ -71,7 +77,7 @@ export default function LoginPage() {
 
                 {/* Styled Link matching your underline aesthetic */}
                 <p className="text-2xl text-center mt-2">
-                    Don't have an account?{" "}
+                    Don`t have an account?{" "}
                     <Link href="/register" className="underline decoration-[#D0FFCE] decoration-4 underline-offset-4 hover:text-gray-500">
                         Sign up
                     </Link>
