@@ -85,9 +85,20 @@ export default function PomodoroPopup({ setIsPomodoroOpen, userId }) {
                 action={handleLogPomodoro}
                 className="flex flex-col gap-6 p-4 md:p-3 bg-white border-4 border-black rounded-3xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] h-[%] w-full max-w-[500px] relative z-20"
             >
-                <h2 className="text-4xl font-black text-center m-0 pb-4 border-b-4 border-black uppercase tracking-wide">
-                    Log Session 🍅
-                </h2>
+
+                <div className="relative flex items-center justify-center pb-4 border-b-4 border-black mb-2">
+                    <button
+                        type="button"
+                        onClick={() => setIsPomodoroOpen(false)}
+                        className="absolute left-0 flex items-center justify-center w-10 h-10 md:w-12 md:h-12 bg-[#fffdce] border-4 border-black rounded-xl shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 active:shadow-none transition-all cursor-pointer"
+                    >
+                        <span className="font-black text-xl md:text-2xl leading-none">{'<'}</span>
+                    </button>
+
+                    <h2 className="text-3xl md:text-4xl font-black text-center m-0 uppercase tracking-wide">
+                        Log Session 🍅
+                    </h2>
+                </div>
 
                 {/* 1. SESSION NAME */}
                 <div className="flex flex-col gap-2">

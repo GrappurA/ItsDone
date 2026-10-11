@@ -5,6 +5,7 @@ export default function ListAddingForm(props) {
     const supabase = createBrowserClient()
 
     async function HandleClick(formData) {
+        props.setIsUpdatingData(true)
         const fakeId = Date.now()
         const todoListTitle = formData.get("todoList");
         const optimisticList = {
@@ -16,7 +17,6 @@ export default function ListAddingForm(props) {
         };
 
         props.setLists(prevLists => [optimisticList, ...prevLists]);
-        props.setIsUpdatingData(true)
 
         const { data, error } = await supabase
             .from("todo_lists")

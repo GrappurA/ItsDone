@@ -246,7 +246,7 @@ export default function ListElement(props) {
                     </div>
                     <div className="bg-[#F2D7EE] w-2/3">
 
-                        <div className="w-full flex items-center justify-center py-2 transition-transform duration-300 hover:rotate-12">
+                        <div className="w-full flex items-center justify-center py-2 transition-transform duration-900 hover:rotate-360">
                             <Image src={donePercentage > donePercentageThreshhold ? filledStar : unfilledStar} width={36} height={36} alt="star" loading="eager" />
                         </div>
                     </div>
@@ -274,39 +274,53 @@ export default function ListElement(props) {
                         <div className="absolute top-0 -left-[100%] w-[60%] h-full bg-gradient-to-r from-transparent via-black/[0.06] to-transparent skew-x-[-25deg] hover:left-[200%] transition-all duration-700 ease-in-out pointer-events-none z-10"></div>
 
                         {/* MODAL HEADER */}
-                        {/* 🚨 RESPONSIVE FIX: flex-col on mobile, flex-row on desktop */}
-                        <div className="bg-[#cefffd] border-b-4 border-black p-4 md:p-6 relative z-20 flex flex-col md:flex-row gap-4 justify-between items-center shrink-0">
+                        <div className="relative z-20 flex w-full h-16 md:h-20 border-b-4 border-black shrink-0 bg-white">
 
-                            <section className="flex items-center justify-between w-full md:w-auto">
-                                <section onClick={() => { setIsOpen(false) }}
-                                    className="flex items-center justify-center border-4 rounded-3xl mr-3 hover:scale-110 transition-all active:scale-150 active:bg-red-400">
-                                    <p className="h-[40%] pr-1 pl-1">{'<'}</p>
-                                </section>
-                                <h2 className="text-3xl md:text-5xl font-extrabold m-0 truncate pr-4 flex-1">{props.title}</h2>
-                                <button
-                                    onClick={() => { handleDeleteList(props.listId) }}
-                                    className="flex items-center justify-center shrink-0 w-12 h-12 md:w-14 md:h-14 bg-[#ff4a4a] border-4 border-black rounded-xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 active:shadow-none transition-all"
-                                >
-                                    <UseAnimations
-                                        animation={trash}
-                                        size={28}
-                                        strokeColor="black"
-                                        wrapperStyle={{ padding: 0 }}
+                            {/* 1. BACK BUTTON */}
+                            <button
+                                onClick={() => { setIsOpen(false) }}
+                                className="flex items-center justify-center h-full w-16 md:w-20 shrink-0 bg-[#fffdce] border-r-8 border-black transition-colors hover:bg-[#fff770] active:bg-[#e5e3b8] cursor-pointer"
+                            >
+                                <p className="font-black text-2xl md:text-3xl leading-none">{'<'}</p>
+                            </button>
+
+                            {/* 2. TITLE SECTION */}
+                            <div className="flex-1 flex items-center justify-center h-full bg-[#cefffd] border-r-3 border-b-2 border-t-2 border-black px-3 min-w-0">
+                                <h2 className="text-xl md:text-3xl font-extrabold m-0 truncate w-full text-center hover:scale-120 transition-all duration-300">{props.title}</h2>
+                            </div>
+
+                            {/* 3. PERCENTAGE SECTION */}
+                            <div className="flex items-center justify-center h-full w-16 md:w-24 shrink-0 bg-[#C3EDAB] border-r-3 border-b-2 border-t-2 border-black">
+                                <p className="font-bold text-xl md:text-3xl leading-none m-0">{donePercentage}%</p>
+                            </div>
+
+                            {/* 4. STAR SECTION */}
+                            <div className="flex items-center justify-center h-full w-16 md:w-20 shrink-0 bg-[#F2D7EE] border-r-8 border-b-2 border-t-2 border-black group">
+                                <div className="transition-transform duration-800 group-hover:rotate-360 group-hover:scale-110">
+                                    <Image
+                                        src={donePercentage > donePercentageThreshhold ? filledStar : unfilledStar}
+                                        width={32}
+                                        height={32}
+                                        alt="star"
+                                        loading="eager"
+                                        className="w-7 h-7 md:w-9 md:h-9"
                                     />
-                                </button>
-                            </section>
+                                </div>
+                            </div>
 
-                            {/* 🚨 RESPONSIVE FIX: w-full on mobile, w-[240px] on desktop */}
-                            <section className="flex items-stretch border-4 border-black rounded-xl overflow-hidden w-full md:w-[240px] h-14 md:h-[60px] shrink-0 bg-white shadow-md">
-                                <div className="bg-[#C3EDAB] flex items-center justify-center border-r-4 border-black px-4 w-1/2">
-                                    <p className="font-bold text-3xl md:text-4xl leading-none m-0">{donePercentage}%</p>
-                                </div>
-                                <div className="bg-[#F2D7EE] flex items-center justify-center w-1/2">
-                                    <div className="transition-transform duration-300 hover:rotate-12 hover:scale-110">
-                                        <Image src={donePercentage > donePercentageThreshhold ? filledStar : unfilledStar} width={36} height={36} alt="star" loading="eager" />
-                                    </div>
-                                </div>
-                            </section>
+                            {/* 5. DELETE BUTTON */}
+                            <button
+                                onClick={() => { handleDeleteList(props.listId) }}
+                                className="flex items-center justify-center h-full w-16 md:w-20 shrink-0 bg-[#ff4a4a] transition-colors hover:bg-red-700 active:bg-[#d63c3c] cursor-pointer"
+                            >
+                                <UseAnimations
+                                    animation={trash}
+                                    size={28}
+                                    strokeColor="black"
+                                    wrapperStyle={{ padding: 0 }}
+                                />
+                            </button>
+
                         </div>
 
                         {/* MODAL BODY (Add Task Form) */}
