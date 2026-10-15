@@ -20,7 +20,7 @@ export default function StatsBoard({ initialList, initialSettings, initialTasks 
 
     const modalContent = {
         "1": {
-            title: "✅ Your Tasks",
+            title: `✅ Your Tasks`,
             color: "bg-[#cefffd]",
             details: <TasksTab tasks={initialTasks} />
         },
@@ -102,7 +102,7 @@ export default function StatsBoard({ initialList, initialSettings, initialTasks 
 
                 {/* CHART WRAPPER: Removed w-fit so it respects mobile screen width. Added overflow-x-auto in case the chart canvas is wider than the phone. */}
                 <div className="w-full max-w-full overflow-x-auto pb-4">
-                    {<StarProgressChart doneThreshold={doneThreshold} data={initialList.data} />}
+                    {<StarProgressChart doneThreshold={doneThreshold} data={initialList.data} avgDonePercentage={avgDonePercentage} />}
                 </div>
 
             </div>

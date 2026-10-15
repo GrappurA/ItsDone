@@ -6,6 +6,7 @@ export default function ListAddingForm(props) {
 
     async function HandleClick(formData) {
         props.setIsUpdatingData(true)
+
         const fakeId = Date.now()
         const todoListTitle = formData.get("todoList");
         const optimisticList = {

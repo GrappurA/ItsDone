@@ -1,6 +1,6 @@
 "use client"
 import React from 'react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
 
 const BrutalistStarDot = (props) => {
     const { cx, cy, payload } = props;
@@ -96,6 +96,19 @@ export default function StarProgressChart(props) {
                             animationDuration={1500}
                             animationEasing="ease-out"
                         />
+
+                        <ReferenceLine
+                            y={props.avgDonePercentage || 60}
+                            stroke="#ff4a4a"
+                            strokeWidth={5}
+                            strokeDasharray="7 6"
+                            label={{
+                                value: `Average (${props.avgDonePercentage || 60}%)`,
+                                fill: '#000',
+                                fontWeight: 'black',
+                                fontSize: 12,
+                                position: 'top'
+                            }} />
                     </LineChart>
                 </ResponsiveContainer>
             </div>

@@ -9,6 +9,7 @@ import createBrowserClient from "../../scripts/createBrowserClient"
 import UseAnimations from "react-useanimations"
 import trash from 'react-useanimations/lib/trash'
 import { useRouter } from "next/navigation"
+import UpdatingPopUp from "./UpdatingPopUp"
 
 export default function ListElement(props) {
 
@@ -45,11 +46,18 @@ export default function ListElement(props) {
     }
 
     //add new todo item
-    async function handleAddNewTaskClick(formData) {
+    async function handleAddNewTaskClick(e) {
+        e.preventDefault()
+
+        props.setIsUpdatingData(true)
+
+        const formData = new FormData(e.target)
         const todoItemTitle = formData.get("todoTaskTitle")
         const todoItemStatus = formData.get("todoTaskStatus")
+        e.target.reset()
 
         const isDone = todoItemStatus == null ? false : true
+
         const fakeItemId = Date.now()
         const optimisticItem = {
             list_id: props.listId,
@@ -61,8 +69,6 @@ export default function ListElement(props) {
         setItemsList(prevItems => [optimisticItem, ...prevItems])
 
         try {
-            props.setIsUpdatingData(true)
-
             const { data: realTask, error } = await supabase
                 .from("todo_tasks")
                 .insert({
@@ -325,13 +331,14 @@ export default function ListElement(props) {
 
                         {/* MODAL BODY (Add Task Form) */}
                         <div className="shrink-0 p-4 md:p-8 bg-white relative z-20">
-                            <form action={handleAddNewTaskClick}>
+                            <form onSubmit={handleAddNewTaskClick}>
                                 <div className="flex gap-2">
 
                                     <input
                                         type="text"
                                         name="todoTaskTitle"
                                         placeholder="What needs to be done?"
+                                        autoComplete="off"
                                         className="w-full border-4 border-black rounded-xl p-2 md:p-3 text-lg md:text-2xl outline-none shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] focus:shadow-[0px_0px_0px_0px_rgba(0,0,0,1)] hover:shadow-[0px_0px_0px_0px_rgba(0,0,0,1)] transition-all bg-white placeholder:text-gray-400"
                                         required
                                     />
@@ -369,6 +376,7 @@ export default function ListElement(props) {
                     </div>
                 </div >
             }
+
         </>
     )
 }

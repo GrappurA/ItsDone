@@ -23,10 +23,6 @@ export default function MoreMenu() {
         router.refresh();
     }
 
-    function HandleEverydayTasksClick() {
-        router.push('/everyday-tasks')
-    }
-
     return (
         <div className="relative ml-auto">
             {/* The Trigger Button */}
@@ -48,9 +44,18 @@ export default function MoreMenu() {
                     >
                         <ul className="flex flex-col text-lg text-white">
 
-                            <li onClick={HandleEverydayTasksClick} className="hover:bg-white/10 p-3 cursor-pointer transition-colors border-b border-white/10">
+                            <li onClick={() => { router.push('/home') }} className="hover:bg-white/10 p-3 cursor-pointer transition-colors border-b border-white/10">
+                                📋 Home Page
+                            </li>
+
+                            <li onClick={() => { router.push('/everyday-tasks') }} className="hover:bg-white/10 p-3 cursor-pointer transition-colors border-b border-white/10">
                                 🎯 Everyday Tasks
                             </li>
+
+                            <li onClick={() => { router.push('/stats') }} className="hover:bg-white/10 p-3 cursor-pointer transition-colors border-b border-white/10">
+                                📊 Statistics
+                            </li>
+
                             <li className="hover:bg-white/10 p-3 cursor-pointer transition-colors border-b border-white/10">
                                 👥 Friends
                             </li>
